@@ -1,6 +1,6 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext, useEffect, useCallback} from 'react';
 import { StyleSheet, Text, View, Linking, Button,  FlatList, TouchableOpacity} from 'react-native';
-import { useNavigation} from '@react-navigation/native';
+import { useNavigation, useFocusEffect} from '@react-navigation/native';
 import PopupOTP from '../Components/PopupOTP';
 import SearchBar from "../Components/SearchBar";
 import AuthContext from '../context/AuthContext';
@@ -10,7 +10,7 @@ const CoproprieteItem = ({ copro }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('DetailCopro', { id : copro.id })}
+      onPress={() => navigation.navigate('Copropriété', { id : copro.id })}
       style={styles.item}>
       <Text style={styles.numero}>{copro.Numero}</Text>
       <Text style={styles.name}>{copro.name}</Text>
@@ -20,24 +20,43 @@ const CoproprieteItem = ({ copro }) => {
 };
 
 
-function Copropriete() {
-  const{contextData} = useContext(AuthContext)
-  let{authTokens} = contextData; 
-  const{user} = contextData; 
+function Copropriete() {  
+  let{contextData} = useContext(AuthContext)
+  let {user} = contextData; 
+  const[actualisation, setActualisation] = useState(false)
+  
   const[popup, setPopup] = useState(false)
-  useEffect(()=>{
-    setPopup(false)
-    if (user){
-      getCopro()
-      getUser()
-    }
-  },[user])
   const navigation = useNavigation();
   const[copros, setCopros]=useState([])
   const[coproprietes, setCoproprietes] = useState([]) //les valeurs de copros sont stockées pour les récupérers si copros est changés et qu'on veut la reinitialisé
+  
+  useEffect(()=>{
+    setPopup(false)
+    let {authTokens} = contextData; 
+    if (user && authTokens){
+      getCopro({authTokens})
+      getUser({authTokens})
+      setActualisation(false)
+    }else{
+      let {logoutUser} = contextData; 
+      setActualisation(false)
+      logoutUser()
+    }
+  },[,actualisation===true, user])
+  
+  useFocusEffect(
+    useCallback(() => {
+      const loadData = async () => {
+        setActualisation(true)
+      };
+      loadData();
+  
+      return () => {
+      };
+    }, [])
+  );
 
-
-  let getCopro = async() =>{
+  let getCopro = async({authTokens}) =>{
       let response = await fetch('https://www.apitrackey.fr/api/Copropriete/',{
           method:'GET',
           headers:{
@@ -49,9 +68,11 @@ function Copropriete() {
               setCopros(data); 
               setCoproprietes(data);
           } else {
-              alert("Créer vos premières copropriétés avec le bouton 'Plus'👇");
+              alert("Créer vos premières copropriétés via le site internet");
+              setCopros([])
+              setCoproprietes([])
           }}
-  let getUser = async() =>{
+  let getUser = async({authTokens}) =>{
       let response = await fetch(`https://www.apitrackey.fr/api/user/account`,{
           method:'GET',
           headers:{
@@ -61,6 +82,8 @@ function Copropriete() {
           let data = await response.json()
           if (data.email_verif === false) {
               setPopup(true)
+          }else{
+            setPopup(false)
           }
   }
   return(user?(

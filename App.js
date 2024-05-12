@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer, useNavigation} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AuthProvider } from "./context/AuthContext.js";
@@ -21,6 +21,7 @@ const AccountStack = createStackNavigator();
 const DataStack = createStackNavigator();
 const ScanStack = createStackNavigator();
 
+
 function AccountStackNavigator(){
   return(
     <AccountStack.Navigator>
@@ -34,7 +35,7 @@ function DataStackNavigator(){
   return(
     <DataStack.Navigator>
       <DataStack.Screen name="Coproprietes" component={Copropriete}/>
-      <DataStack.Screen name="DetailCopro" component={DetailCopro} options={{id :'copro.id'}}/>
+      <DataStack.Screen name="Copropriété" component={DetailCopro} options={{id :'copro.id'}}/>
       <DataStack.Screen name="DetailCommonKey" component={DetailCommonKey}/>
       <DataStack.Screen name="DetailPrivateKey" component={DetailPrivateKey}/>
       <DataStack.Screen name="CreateCommonKey" component={CreateCommonKey}/>

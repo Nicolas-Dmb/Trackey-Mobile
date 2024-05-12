@@ -61,7 +61,6 @@ function CreatePrivateKey(){
             return;
         }else{
             postPrivateKey()
-            navigation.navigate('DetailCopro', { id : copropriete.id })
         }
     }
 
@@ -82,7 +81,7 @@ function CreatePrivateKey(){
         });
         await response.json()
         if (response.ok) {
-            navigation.navigate("DetailCopro",{id : copropriete.id})
+            navigation.navigate("Copropriété",{id : copropriete.id})
         } else if(response.status===401){
             alert(`Vous êtes déconnecté`);
         }else {

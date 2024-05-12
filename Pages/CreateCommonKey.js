@@ -62,7 +62,6 @@ function CreateCommonKey(){
             return;
         }else{
             postCommonKey()
-            navigation.navigate('DetailCopro', { id : copropriete.id })
         }
     }
 
@@ -82,7 +81,7 @@ function CreateCommonKey(){
         });
         await response.json()
         if (response.ok) {
-            navigation.navigate("DetailCopro",{id : copropriete.id})
+            navigation.navigate("Copropriété",{id : copropriete.id})
         } else {
             alert(`Numéro déjà utilisé`);
         }

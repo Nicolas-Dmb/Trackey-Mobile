@@ -1,9 +1,7 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import { StyleSheet, Text,Image, View, Linking, Button,  FlatList, TouchableOpacity} from 'react-native';
 import AuthContext from '../context/AuthContext';
-import available from '../static/available.svg';
-import unavailable from '../static/unavailable.svg';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 
 
 function formatDate(dateString){
@@ -24,8 +22,9 @@ const ListTracks=({item}) => {
 function DetailPrivateKey(){
     //Auth
     const{contextData} = useContext(AuthContext)
-    let{authTokens} = contextData; 
     const navigation = useNavigation()
+    const [count, setCount] = useState(0);
+    const[actualisation, setActualisation] = useState(false)
     //Variable
     const route = useRoute()
     const {state} = route.params;
@@ -35,7 +34,13 @@ function DetailPrivateKey(){
     const[tracks, setTracks] = useState([])
     const[authorize, setAuthorize]= useState(true)
 
-    let getKey = async() =>{
+    useEffect(()=>{
+        let{authTokens} = contextData; 
+        getKey({authTokens})
+        setActualisation(false)
+    },[,actualisation===true,idKey])
+
+    let getKey = async({authTokens}) =>{
         let response = await fetch (`https://www.apitrackey.fr/api/PrivateKey/${idKey}/`,{
             method:'GET',
             headers:{
@@ -52,9 +57,22 @@ function DetailPrivateKey(){
             alert("Une erreur s'est produite")
        }
     }
-    useEffect(()=>{
-        getKey()
-    },[idKey, authTokens])
+
+    useFocusEffect(
+        useCallback(() => {
+          const loadData = async () => {
+            setTimeout(() => {
+                setActualisation(true)
+                setCount(c => c + 1);
+            }, 3000);
+          };
+      
+          loadData();
+      
+          return () => {
+          };
+        }, [])
+      );
     
     return(authorize?(
         <View className='Main'>

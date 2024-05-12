@@ -1,7 +1,7 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import AuthContext from '../context/AuthContext';
 import { StyleSheet, Text, View, Linking, Button,  FlatList, TouchableOpacity} from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
 const ListKeyCommon=({item, copro}) => {
     const navigation = useNavigation()
@@ -28,7 +28,9 @@ const ListKeyPrivate=({item, copro}) => {
 
 function DetailCopro(){
     const{contextData} = useContext(AuthContext)
-    let{authTokens} = contextData; 
+    const{user} = contextData;
+    const [count, setCount] = useState(0);
+    const[actualisation, setActualisation] = useState(false)
     //On récupère la copropriété clické par l'user 
     const route = useRoute()
     const {id} = route.params;
@@ -36,8 +38,14 @@ function DetailCopro(){
     const[copropriete, setCopropriete] = useState([])
     const[commonkeys, setCommonkeys] = useState([])
     const[privatekeys, setPrivatekeys] = useState([])
+    
+    useEffect(()=> {
+        let{authTokens} = contextData; 
+        getCopropriete({authTokens})
+        setActualisation(false)
+    },[,actualisation===true,user])
 
-    let getCopropriete = async() =>{
+    let getCopropriete = async({authTokens}) =>{
         let response = await fetch(`https://www.apitrackey.fr/api/Copropriete/${id}/`,{
             method:'GET',
             headers:{
@@ -51,12 +59,24 @@ function DetailCopro(){
             setPrivatekeys(data.privatekey_set || []);
         } else {
             alert("Créer vos premières clés");
+            setCopropriete([])
+            setCommonkeys([]);
+            setPrivatekeys([]);
         }}
 
-    useEffect(()=> {
-        getCopropriete()
-    },[])
-
+    useFocusEffect(
+        useCallback(() => {
+          const loadData = async () => {
+            setTimeout(() => {
+                setActualisation(true)
+                setCount(c => c + 1);
+            }, 3000);
+          };
+          loadData();
+          return () => {
+          };
+        }, [])
+      );
    
     return(
         <View className='Main'>
