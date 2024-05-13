@@ -10,7 +10,7 @@ const CoproprieteItem = ({ copro }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('Copropriété', { id : copro.id })}
+      onPress={() => navigation.navigate('Copropriété', { id : copro.id, title: copro.Numero })}
       style={styles.item}>
       <Text style={styles.numero}>{copro.Numero}</Text>
       <Text style={styles.name}>{copro.name}</Text>
@@ -22,41 +22,33 @@ const CoproprieteItem = ({ copro }) => {
 
 function Copropriete() {  
   let{contextData} = useContext(AuthContext)
-  let {user} = contextData; 
-  const[actualisation, setActualisation] = useState(false)
+  let {user} = contextData;
+  let {authTokens} = contextData; 
+  let {logoutUser} = contextData;
+
   
-  const[popup, setPopup] = useState(false)
+  const[popup, setPopup] = useState()
   const navigation = useNavigation();
   const[copros, setCopros]=useState([])
   const[coproprietes, setCoproprietes] = useState([]) //les valeurs de copros sont stockées pour les récupérers si copros est changés et qu'on veut la reinitialisé
   
   useEffect(()=>{
     setPopup(false)
-    let {authTokens} = contextData; 
-    if (user && authTokens){
-      getCopro({authTokens})
-      getUser({authTokens})
-      setActualisation(false)
-    }else{
-      let {logoutUser} = contextData; 
-      setActualisation(false)
-      logoutUser()
-    }
-  },[,actualisation===true, user])
-  
+    getUser()
+  },[user])
+
   useFocusEffect(
     useCallback(() => {
-      const loadData = async () => {
-        setActualisation(true)
-      };
-      loadData();
-  
-      return () => {
-      };
-    }, [])
+      if(authTokens){
+        getCopro()
+      }else{
+        logoutUser()
+      }
+    }, [authTokens, logoutUser])
   );
+  
 
-  let getCopro = async({authTokens}) =>{
+  let getCopro = async() =>{
       let response = await fetch('https://www.apitrackey.fr/api/Copropriete/',{
           method:'GET',
           headers:{
@@ -72,7 +64,8 @@ function Copropriete() {
               setCopros([])
               setCoproprietes([])
           }}
-  let getUser = async({authTokens}) =>{
+
+  let getUser = async() =>{
       let response = await fetch(`https://www.apitrackey.fr/api/user/account`,{
           method:'GET',
           headers:{
@@ -82,25 +75,23 @@ function Copropriete() {
           let data = await response.json()
           if (data.email_verif === false) {
               setPopup(true)
-          }else{
-            setPopup(false)
-          }
-  }
+          }}
+
   return(user?(
-      popup? (<PopupOTP setPopup={setPopup} verif_mail={true}/>)
-      :(
-      <View className='Main'>
-          <View className='lien'>
-              <SearchBar setCopros={setCopros} coproprietes={coproprietes}/>
-              <Button title="Nouvelle Copropriété" onPress={()=> alert('Pour ajouter des copropriétés veuillez vous connecter au site web')}/>
-          </View>   
-          <FlatList
-            data={copros}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => <CoproprieteItem copro={item} />}
-          />
-      </View>)
-  ):(<Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)
+    popup? (<PopupOTP setPopup={setPopup} verif_mail={true}/>)
+    :(
+    <View className='Main'>
+        <View className='lien'>
+            <SearchBar setCopros={setCopros} coproprietes={coproprietes}/>
+            <Button title="Nouvelle Copropriété" onPress={()=> alert('Pour ajouter des copropriétés veuillez vous connecter au site web')}/>
+        </View>   
+        <FlatList
+          data={copros}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => <CoproprieteItem copro={item} />}
+        />
+    </View>)
+    ):(<Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)
   )
 }
 

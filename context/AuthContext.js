@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
+
 const AuthContext = createContext(null)
 
 export default AuthContext; 
@@ -79,9 +80,9 @@ export const AuthProvider = ({children}) => {
     }
 
     let logoutUser=()=>{
-        setAuthTokens(null)
-        setUser(null)
-        AsyncStorage.removeItem('authTokens')
+          setAuthTokens(null)
+          setUser(null)
+          AsyncStorage.removeItem('authTokens')
     }
 
 
@@ -123,7 +124,7 @@ export const AuthProvider = ({children}) => {
 
     
     return (
-        <AuthContext.Provider value={{contextData}}>
+        <AuthContext.Provider value={{contextData, user}}>
             {children}
         </AuthContext.Provider>
     )

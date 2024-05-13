@@ -29,8 +29,9 @@ const ListKeyPrivate=({item, copro}) => {
 function DetailCopro(){
     const{contextData} = useContext(AuthContext)
     const{user} = contextData;
+    let{authTokens} = contextData; 
+    let{logoutUser} = contextData; 
     const [count, setCount] = useState(0);
-    const[actualisation, setActualisation] = useState(false)
     //On récupère la copropriété clické par l'user 
     const route = useRoute()
     const {id} = route.params;
@@ -40,12 +41,14 @@ function DetailCopro(){
     const[privatekeys, setPrivatekeys] = useState([])
     
     useEffect(()=> {
-        let{authTokens} = contextData; 
-        getCopropriete({authTokens})
-        setActualisation(false)
-    },[,actualisation===true,user])
+        if (authTokens){
+            getCopropriete()
+        }else{
+            logoutUser()
+        }
+    },[])
 
-    let getCopropriete = async({authTokens}) =>{
+    let getCopropriete = async() =>{
         let response = await fetch(`https://www.apitrackey.fr/api/Copropriete/${id}/`,{
             method:'GET',
             headers:{
@@ -68,14 +71,16 @@ function DetailCopro(){
         useCallback(() => {
           const loadData = async () => {
             setTimeout(() => {
-                setActualisation(true)
+                if (authTokens){
+                    getCopropriete()
+                }else{
+                    logoutUser()
+                }
                 setCount(c => c + 1);
             }, 3000);
           };
           loadData();
-          return () => {
-          };
-        }, [])
+        }, [authTokens,logoutUser])
       );
    
     return(

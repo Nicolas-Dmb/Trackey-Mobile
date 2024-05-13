@@ -1,8 +1,6 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
 import { StyleSheet, Text,Image, View, Linking, Button,  FlatList, TouchableOpacity} from 'react-native';
 import AuthContext from '../context/AuthContext';
-import available from '../static/available.svg';
-import unavailable from '../static/unavailable.svg';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 
 
@@ -24,9 +22,10 @@ const ListTracks=({item}) => {
 function DetailCommonKey(){
     //Auth
     const{contextData} = useContext(AuthContext)
+    let{authTokens} = contextData; 
+    let{logoutUser} = contextData; 
     const navigation = useNavigation()
     const [count, setCount] = useState(0);
-    const[actualisation, setActualisation] = useState(false)
     //Variable
     const route = useRoute()
     const {state} = route.params;
@@ -37,12 +36,15 @@ function DetailCommonKey(){
     const[authorize, setAuthorize]= useState(true)
 
     useEffect(()=>{
-        let{authTokens} = contextData; 
-        getKey({authTokens})
-        setActualisation(false)
-    },[,actualisation===true,idKey])
+        alert('useEffect')
+        if (authTokens){
+            getKey()
+        }else{
+            logoutUser()
+        }
+    },[])
 
-    let getKey = async({authTokens}) =>{
+    let getKey = async() =>{
         let response = await fetch (`https://www.apitrackey.fr/api/CommonKey/${idKey}/`,{
             method:'GET',
             headers:{
@@ -64,16 +66,16 @@ function DetailCommonKey(){
         useCallback(() => {
           const loadData = async () => {
             setTimeout(() => {
-                setActualisation(true)
+                if(authTokens){
+                    getKey()
+                }else{
+                    logoutUser()
+                }
                 setCount(c => c + 1);
             }, 3000);
           };
-      
           loadData();
-      
-          return () => {
-          };
-        }, [])
+        }, [authTokens, logoutUser])
       );
     
     return(authorize?(

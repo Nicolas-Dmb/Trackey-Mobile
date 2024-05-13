@@ -15,9 +15,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    },
+      "supportsTablet": true,
+      "bundleIdentifier": "com.trackey.trackey",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Souhaitez-vous autoriser Trackey à utiliser votre camera ?"}
+  },
     "android": {
+      "package": "com.trackey.trackey",
+      "versionCode": 1,
+      "permissions": ["CAMERA"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -30,6 +36,7 @@
       "eas": {
         "projectId": "7d565900-1824-4228-8d17-52c5c648f8aa"
       }
-    }
+    },
+    "platforms": ["ios", "android"]
   }
 }

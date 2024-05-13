@@ -22,9 +22,10 @@ const ListTracks=({item}) => {
 function DetailPrivateKey(){
     //Auth
     const{contextData} = useContext(AuthContext)
+    let{authTokens} = contextData; 
+    let {logoutUser} = contextData;
     const navigation = useNavigation()
     const [count, setCount] = useState(0);
-    const[actualisation, setActualisation] = useState(false)
     //Variable
     const route = useRoute()
     const {state} = route.params;
@@ -35,12 +36,14 @@ function DetailPrivateKey(){
     const[authorize, setAuthorize]= useState(true)
 
     useEffect(()=>{
-        let{authTokens} = contextData; 
-        getKey({authTokens})
-        setActualisation(false)
-    },[,actualisation===true,idKey])
+        if(authTokens){
+            getKey()
+        }else{
+            logoutUser()
+        }
+    },[])
 
-    let getKey = async({authTokens}) =>{
+    let getKey = async() =>{
         let response = await fetch (`https://www.apitrackey.fr/api/PrivateKey/${idKey}/`,{
             method:'GET',
             headers:{
@@ -62,16 +65,16 @@ function DetailPrivateKey(){
         useCallback(() => {
           const loadData = async () => {
             setTimeout(() => {
-                setActualisation(true)
+                if(authTokens){
+                    getKey()
+                }else{
+                    logoutUser()
+                }
                 setCount(c => c + 1);
             }, 3000);
           };
-      
           loadData();
-      
-          return () => {
-          };
-        }, [])
+        }, [authTokens, logoutUser])
       );
     
     return(authorize?(
