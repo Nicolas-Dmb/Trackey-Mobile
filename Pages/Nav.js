@@ -14,6 +14,7 @@ import DetailCommonKey from './DetailCommonKey.js';
 import DetailPrivateKey from './DetailPrivateKey.js';
 import ModifCommonKey from './ModifCommonKey.js';
 import ModifPrivateKey from './ModifPrivateKey.js';
+import Error_Key from './Error_key.js';
 
 const Tab = createBottomTabNavigator();
 const AccountStack = createStackNavigator();
@@ -47,8 +48,9 @@ function ScanStackNavigator(){
   return(
     <ScanStack.Navigator>
       <ScanStack.Screen name="Scan_Unique" component={Scan}/>
-      {/*<ScanStack.Screen name="ScanMultiple" component={ScanMultiple}/>
-      <ScanStack.Screen name="Form" component={Form}/>*/}
+      <ScanStack.Screen name="Erreur_Agence" component={Error_Key}/>
+      {//<ScanStack.Screen name="Form" component={Form}/>
+}
     </ScanStack.Navigator>
   )
 }

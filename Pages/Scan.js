@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
-import { CameraView, Camera } from "expo-camera/next";
+import React, { useState, useEffect, useContext,} from "react";
+import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList} from "react-native";
+import { CameraView, useCameraPermissions} from "expo-camera";
+import { useNavigation } from '@react-navigation/native';
+import AuthContext from '../context/AuthContext';
+import {UseKey} from "../Components/GetScanKey";
 /*
 
 Il faut que j'intègre :
@@ -11,43 +14,160 @@ Il faut que j'intègre :
 - une gestion des user (on restart à la page d'origine si on deconnecte et on supprime les données scannées)
 
 */
+const KeyItem = ({ item }) => {
+  alert('keyItem')
+  return (
+    <TouchableOpacity style={item.available ? (styles.item):(styles.reditem)}>
+      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.acces}>{item.acces}</Text>
+      <Text style={styles.available}>{item.available ? ('Départ'):('Retour')}</Text>
+    </TouchableOpacity>
+  );
+}
 export default function App() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+  //Auth
+  let{contextData} = useContext(AuthContext)
+  let {user} = contextData;
+  let {authTokens} = contextData; 
+  let {logoutUser} = contextData;
+  //Config
+  const [Permission, setPermission] = useCameraPermissions();
+  const [scan, setScan] = useState(false)
+  const navigation = useNavigation()
+  //données
+  const [key, setKey] = useState()
+  const [reset, setReset] = useState(false)
+  const [listKey, setListKey] = useState([])
 
-  useEffect(() => {
-    const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
-
-    getCameraPermissions();
-  }, []);
-
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+  //Requêtes 
+  let getCommonTrack = async (info) => {
+    const response = await fetch(`https://www.apitrackey.fr/api/TrackC/update/${info.idkey}/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authTokens.access}`
+        }
+    });
+    let data = await response.json();
+    if (response.status === 202 || response.status === 307) {
+        //alert(data.key.name)
+        setKey(data.key);
+    } else if (response.status === 404) {
+        navigation.navigate("Erreur_Agence", { Agence: data.Name, Adresse: data.Adresse });
+    } else if (response.status === 400) {
+        alert("Aucune correspondance");
+    } else if (response.status === 401) {
+        logoutUser();
+    }
   };
+  let getPrivateTrack = async (info) => {
+        const response = await fetch(`https://www.apitrackey.fr/api/TrackP/update/${info.idkey}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authTokens.access}`
+            }
+        });
+        const data = await response.json();
+        if (response.status=== 202 || response.status === 307) {
+            setKey(data.key);
+        } else if (response.status === 404) {
+            navigation.navigate("Erreur_Agence", { Agence: data.Name, Adresse: data.Adresse });
+        } else if (response.status === 400) {
+            alert("Aucune correspondance");
+        } else if (response.status === 401) {
+            logoutUser();
+        }
+};
 
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+  useEffect(()=>{
+    if (!user || !authTokens){
+      logoutUser()
+    }
+  },[])
+  
+  if (!Permission) {
+    return <View/>;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+  if (!Permission.granted) {
+    return (
+      <View>
+        <Text style={{ textAlign: 'center' }}>Nous avons besoin de votre permission pour accéder à la camera</Text>
+        <Button onPress={setPermission} title="Donner la permission" />
+      </View>);
   }
+
+
+  const handleBarCodeScanned = ({ data }) => {
+    setScan(true)
+    //set data
+    let type = '';
+    let idkey = '';
+    //set type
+    if (data.includes("CommonKey")){
+        type = 'CommonKey'
+    }else if (data.includes("PrivateKey")){
+        type = 'PrivateKey'
+    }
+    //set Id Key
+    let i = data.length
+    while(i >= 0){
+      letter = Number.parseInt(data[i])
+      if (Number.isInteger(letter)){
+        idkey = idkey + data[i]
+      }else if (idkey.length > 1){
+        break
+      }
+      i--
+    }
+    //check if all informations is set
+    if (idkey === '' || type === ''){
+      alert("erreur de détection de la clé")
+    }
+    let info={
+        'type':type,
+        'idkey':idkey,
+    }
+    data = null
+    if(info.type === 'CommonKey'){
+      getCommonTrack(info)
+    }else{
+      getPrivateTrack(info)
+    }
+    setReset(false)
+    let list = []
+    list.push(key)
+    list.push(listKey)
+    //alert(list.length)
+    setListKey(list);
+    alert(listKey.length)
+    if(listKey.length > 0){
+      let clé = listKey[1]
+      alert(clé.acces)
+    }
+  };
 
   return (
     <View style={styles.container}>
       <CameraView
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        onBarcodeScanned={scan ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: ["qr", "pdf417"],
         }}
-        style={StyleSheet.absoluteFillObject}
+        facing={'back'}
+        style={styles.camera}
       />
-      {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-      )}
+      {listKey.length > 0 &&
+      <View>
+          <Button title="scanner d'autres clés" onPress={()=> setScan(false)}/> 
+          <Button title="Envoyer Questionnaire" onPress={()=> navigation.navigate('')}/>
+      </View>}
+      {reset &&
+      <FlatList
+      data={listKey}
+      keyExtractor={item => item.id.toString()}
+      renderItem={({ item }) => <KeyItem item={item} />}
+      />}
     </View>
   );
 }
@@ -56,55 +176,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "center",
-  },
-});
-/*export default function App() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-
-  useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    };
-
-    getBarCodeScannerPermissions();
-  }, []);
-
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  };
-
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
-  return (
-    <View style={styles.container}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
-      />
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    alignItems:'center',
   },
   camera:{
-    flex: 1,
-    position:'absolute',
-    width:'100%',
-    height:'100%',
+
+    width:'90%',
+    height:'40%',
+
   },
-});*/
+  reditem:{
+    backgroundColor:'#D3E7A6',
+    flexDirection: 'row',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  item: {
+      backgroundColor:'#EEF6D6',
+      flexDirection: 'row',
+      padding: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ccc',
+  },
+  name: {
+    marginRight: 10,
+    fontWeight: 'bold',
+  },
+  acces: {
+    flex: 1,
+  },
+  available: {
+    fontStyle: 'italic',
+  }
+});
