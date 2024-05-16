@@ -13,7 +13,7 @@ const ListTracks=({item}) => {
         <TouchableOpacity
         style={styles.item}>
             <Text style={styles.entreprise}>{item.entreprise}</Text>
-            <Text style={styles.depart}>Départ: {formatDate(item.depart)}- Retour : {item.retour!==null && formatDate(track.retour)}</Text>
+            <Text style={styles.depart}>Départ: {formatDate(item.depart)}- Retour : {item.retour!==null && formatDate(item.retour)}</Text>
             <Text >{item.tel}</Text>
             <Text >{item.notes}</Text>
         </TouchableOpacity>

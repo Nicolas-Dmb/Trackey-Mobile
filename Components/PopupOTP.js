@@ -36,7 +36,7 @@ function PopupOTP({setPopup, verif_mail}){
                 {verif_mail?(<Text>Avant de continuer veuillez vérifier votre adresse Email</Text>):(<Text>Page sécurisée</Text>)}
                 <Text>Veuillez récupérer le code reçu par Email</Text>
                 <Text> Code :</Text>
-                    <TextInput value={otp} onChangeText={setOtp} />
+                    <TextInput value={otp} keyboardType='numeric' onChangeText={setOtp} />
                 <Button title="Valider" onPress={() => verifyOTP()} />
             </View>
     )
