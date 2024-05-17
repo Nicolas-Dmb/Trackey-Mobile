@@ -38,6 +38,8 @@ function CreateTrack(){
 
     //Vérifier que l'utilisateur est identifié et si des départs de clés sont à faire ou non 
     useEffect(()=>{
+        setKeyError([])
+        SetError(false)
         if (!user && !authTokens){
             logoutUser()
         }else{
@@ -49,32 +51,32 @@ function CreateTrack(){
                 }
                 i++
             }
-            let matches = ListKey.filter(key=> key.retour!==true)
+            let matches = ListKey.filter(key=> key.action!==false)
             //Si il n'y a pas de départ
             if (matches.length===0){
-                if(keyError.length!==0){
+                if(keyError.length===0){
                     navigation.navigate("Résultats",{ListKey:ListKey,keyError:keyError})
                 }else{
                     SetError(true)
                 }
             }
         }
-    },[ListKey])
+    },[])
 
-    //Vérifier si toutes les valeurs sont saisies, puis itérer chaque clé dont on créer un départ 
+    //Vérifier si toutes les valeurs sont saisies, puis itérer chaque clé 
     const SendForm = () =>{
         if(!entreprise || !tel ){
             alert("Informations manquantes")
         }else{
             let i = 0
             while(ListKey.length > i){
+                // Pour chaque clé disponible et donc l'action n'est pas false
                 if (ListKey[i].available === true && ListKey[i].action !== false){
-                    alert(`Nouveau Track pour : ${ListKey[i].name}`)
                     CreateTrack(ListKey[i])
                 }
                 i++
             }
-            if(keyError){
+            if(keyError.length===0){
                 navigation.navigate("Résultats",{ListKey:ListKey,keyError:keyError})
             }else{
                 SetError(true)
@@ -82,16 +84,16 @@ function CreateTrack(){
         }
     }
     //Requetes
-    const updateAvailable = (index, newAvailableValue) => {
-        alert(`setavailable pour  ${ListKey[index].name}`)
+    const updateAvailable = (index) => {
         setListKey(currentListKey => 
           currentListKey.map((item, idx) => 
-            idx === index ? { ...item, available: newAvailableValue } : item
+            idx === index ? { ...item, available: true } : item
           )
         );
       };
     //Requête qui gère les clé avec un available=== false et available === null 
     let returnTrack = async (info,i) => {
+        if (info.available===false){ //j'ai un problème de double envoie du return donc je mets ca 
         try{
             const response = await fetch(`https://www.apitrackey.fr/api/${info.type?'TrackC':'TrackP'}/update/${info.id}/`, {
                 method: 'GET',
@@ -101,10 +103,11 @@ function CreateTrack(){
                 }
             });
             if (response.status===202){
-                ('response 202')
-                let available = true 
-                updateAvailable(i, available)
+                //si retour correctement effectué alors on affecte available à true pour la clé
+                alert(`202${info.name}`)
+                updateAvailable(i)
             }else if (response.status === 307){
+                alert(`307${info.name}`)
                 const key = {
                     ...info,
                     message:'retour impossible',
@@ -137,6 +140,7 @@ function CreateTrack(){
             setKeyError(ErrorKey =>[ ...ErrorKey, key ])
         }
     }
+    }
     //Pour gérer les départs
     let CreateTrack = async(key) =>{
         try{
@@ -149,7 +153,6 @@ function CreateTrack(){
                 });
                 await response.json()
                 if (response.ok){
-
                 }else if (response.status===401){
                     logoutUser()
                 }else {

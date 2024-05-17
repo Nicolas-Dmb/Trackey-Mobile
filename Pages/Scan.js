@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext,useCallback} from "react";
-import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList} from "react-native";
+import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, Image} from "react-native";
 import { CameraView, useCameraPermissions} from "expo-camera";
+import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AuthContext from '../context/AuthContext';
+import { globalStyles } from '../styles/GlobalStyles';
 
 /*
 
@@ -16,23 +18,38 @@ Il faut que j'intègre :
 
 */
 const KeyItem = ({ item, setListKey, listKey}) => {
+  const renderRightActions = (progress, dragX) => {
+    const supprimer = () => {
+      setListKey(currentKeys =>
+        currentKeys.filter(value => value.unique !== item.unique)
+      );
+    }
+    return(
+          <Button style={globalStyles.supprimer} title='Supprimer' onPress={supprimer}/>
+)
+  }
+  const[onclick, setOnclick] = useState(0) //doit cliquer deux fois pour changer l'action
   //permet à l'user de choisir s'il veut que la clé revienne ou revienne et reparte directement. 
   const HandleChangeItem =()=>{
-    if (!item.action || item.action === null){
+    setOnclick(0)
+    if (!item.action){
+      let change = item.action===null ? false:null;
       setListKey(key=>
         key.map(value =>
-          value.unique === item.unique ? {...item, action:(item.action===false?null:false)} : value
+          value.unique === item.unique ? {...item, action:change} : value
         )
       )
     }
   }
   return (
-    <TouchableOpacity style={item.action ? (styles.reditem):(styles.item)} onPress={HandleChangeItem}>
-      <Text style={styles.copro}>{item.copro}</Text>
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.acces}>{item.acces}</Text>
-      <Text style={styles.available}>{item.action===null?('Retour/Départ'):(item.action ?('Départ'):('Retour'))}</Text>
-    </TouchableOpacity>
+    <Swipeable renderRightActions={renderRightActions}>
+        <TouchableOpacity style={item.action ? (globalStyles.Etiquette1):(globalStyles.Etiquette2)} onPress={()=>onclick===1?HandleChangeItem():setOnclick(onclick+1)}>
+          <Text style={globalStyles.Attri1}>{item.copro}</Text>
+          <Text style={globalStyles.Attri2}>{item.name}</Text>
+          <Text style={globalStyles.Attri2}>{item.acces}</Text>
+          <Text style={globalStyles.Attri3}>{item.action===null?('Retour/Départ'):(item.action?('Départ'):('Retour'))}</Text>
+        </TouchableOpacity>
+    </Swipeable>
   );
 }
 export default function App() {
@@ -57,6 +74,7 @@ export default function App() {
       }else{
         //Si on refocus on supprime la liste scannée
         setListKey([])
+        setScan(false)
       }
     }, [])
   );
@@ -78,7 +96,7 @@ export default function App() {
       const key = {
         ...data.key,
         copro: data.copro, // obtenir le numéro de copro de la clé 
-        action : data.available, //action à réaliser
+        action : data.key.available, //action à réaliser
         type: info.type, //permet de continuer à distinger les private des communes (true = common)
         unique: (data.key.id).toString()+info.type//unique identifiant
       };
@@ -152,22 +170,22 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.page}>
       <CameraView
         onBarcodeScanned={(event) =>scan? undefined: handleBarCodeScanned(event)} // dans tous les cas je le met permettant de laver la data (a voir si ca marche)
         barcodeScannerSettings={{
           barcodeTypes: ["qr", "pdf417"],
         }}
         facing={'back'}
-        style={styles.camera}
+        style={globalStyles.camera}
       />
       {scan &&
-      <View>
-          <Button title="scanner d'autres clés" onPress={()=> setScan(false)}/> 
-          <Button title="Envoyer Questionnaire" onPress={()=> navigation.navigate("Départ/Retour", {Liste: listKey})}/>
+      <View style={globalStyles.inlineContainer}>
+          <Button style={globalStyles.button} title="scanner d'autres clés" onPress={()=> setScan(false)}/> 
+          <Button style={globalStyles.button} title="Envoyer Questionnaire" onPress={()=> navigation.navigate("Départ/Retour", {Liste: listKey})}/>
       </View>}
       <FlatList
-      style = {styles.liste}
+      style = {globalStyles.liste}
       data={listKey}
       keyExtractor={item => item.unique.toString()}
       renderItem={({ item }) => <KeyItem item={item} setListKey={setListKey} ListKey={listKey}/>}
@@ -176,45 +194,3 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems:'center',
-  },
-  camera:{
-    width:'90%',
-    height:'40%',
-  },
-  reditem:{
-    backgroundColor:'#D3E7A6',
-    flexDirection: 'row',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  liste:{
-    width:'100%',
-  },  
-  item: {
-      backgroundColor:'#EEF6D6',
-      flexDirection: 'row',
-      padding: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
-  },
-  name: {
-    flex:1,
-    fontWeight: 'bold',
-  },
-  acces:{
-    flex:1,
-  },
-  available: {
-    marginLeft:'10%',
-    fontStyle: 'italic',
-  },
-  copro:{
-    flex:1,
-  }
-});

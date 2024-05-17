@@ -1,4 +1,5 @@
 import React, {useContext, useEffect} from 'react';
+import {Image, Text} from "react-native";
 import { NavigationContainer} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -25,7 +26,7 @@ const ScanStack = createStackNavigator();
 
 function AccountStackNavigator(){
   return(
-    <AccountStack.Navigator>
+    <AccountStack.Navigator screenOptions={{ headerShown: false}}>
       <AccountStack.Screen name="Connexion" component={Account}/>
       <AccountStack.Screen name="Mot de passe oublié" component={MPoublie}/>
     </AccountStack.Navigator>
@@ -46,9 +47,15 @@ function DataStackNavigator(){
     </DataStack.Navigator>
   )
 }
-function ScanStackNavigator(){
+function ScanStackNavigator({ navigation }){
   return(
-    <ScanStack.Navigator>
+    <ScanStack.Navigator    screenOptions={{
+      tabBarLabelStyle: {
+        fontSize: 16,  // Taille de police pour les noms des onglets
+      },
+      tabBarActiveTintColor: 'tomato',  // Couleur de l'onglet actif
+      tabBarInactiveTintColor: 'gray',  // Couleur des autres onglets
+    }}>
       <ScanStack.Screen name="Scan_Unique" component={Scan}/>
       <ScanStack.Screen name="Erreur_Agence" component={Error_Key}/>
       <ScanStack.Screen name="Départ/Retour" component={CreateTrack}/>
@@ -62,15 +69,48 @@ const Nav=()=>{
     const { user } = contextData
   return (
       user? 
-        (<NavigationContainer style={{backgroundColor: '#FCFDFA'}}>
-          <Tab.Navigator initialRouteName="Données">
+        (<NavigationContainer>
+          <Tab.Navigator initialRouteName="Données"
+          screenOptions={({ route }) => ({
+            headerShown: false,
+            tabBarIcon: ({ focused, color, size }) => {
+              if (route.name === 'Scan') {
+                // Affiche un logo uniquement pour l'onglet 'Scan'
+                return <Image source={require('../static/scan.png')} style={{ width: 80, height: 80 }} />;
+              } else {
+                // Gestion des autres icônes avec Ionicons ou autre
+                const icons = {
+                  Home: focused ? 'ios-home-sharp' : 'ios-home-outline',
+                  Favorites: focused ? 'ios-heart-sharp' : 'ios-heart-outline',
+                  Data: focused ? 'ios-list-box' : 'ios-list',
+                  Account: focused ? 'ios-person' : 'ios-person-outline'
+                };
+                const iconName = icons[route.name];
+                return <Image name={iconName} size={size} color={color} />;
+              }
+            },
+            tabBarLabel: ({ focused, color }) => {
+              // Gérer les labels ici si vous voulez conditionnellement les afficher ou les styliser
+              if (route.name === 'Scan') {
+                return null; // Aucun texte pour 'Scan'
+              }
+              // Labels pour les autres onglets
+              return <Text style={{ color, fontSize: 18 }}>{route.name}</Text>;
+            },
+            tabBarActiveTintColor: '#37401C',
+            tabBarInactiveTintColor: '#5C7C2F',
+            tabBarStyle: {borderTopLeftRadius: 30, borderTopRightRadius: 30, backgroundColor: '#F8FAF3', position: 'absolute', height: 80 },
+            tabBarLabelStyle: { paddingBottom: 3 },
+          })}
+          
+          >
               <Tab.Screen name="Données" component={DataStackNavigator}/>
               <Tab.Screen name="Scan" component={ScanStackNavigator}/>
               <Tab.Screen name="Compte" component={AccountStackNavigator}/>
             </Tab.Navigator>
           </NavigationContainer>):
-          (<NavigationContainer style={{backgroundColor: '#FCFDFA'}}>
-              <Tab.Navigator initialRouteName="Compte">
+          (<NavigationContainer>
+              <Tab.Navigator initialRouteName="Compte" screenOptions={{ headerShown: false }}>
                   <Tab.Screen name="Compte" component={AccountStackNavigator}/>
               </Tab.Navigator>
           </NavigationContainer>)

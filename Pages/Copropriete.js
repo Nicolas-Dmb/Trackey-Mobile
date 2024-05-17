@@ -33,13 +33,17 @@ function Copropriete() {
   const[coproprietes, setCoproprietes] = useState([]) //les valeurs de copros sont stockées pour les récupérers si copros est changés et qu'on veut la reinitialisé
   
   useEffect(()=>{
-    setPopup(false)
-    getUser()
+    if(!user || !authTokens){
+      logoutUser()
+    }else{
+      setPopup(false)
+      getUser()
+    }
   },[user])
 
   useFocusEffect(
     useCallback(() => {
-      if(authTokens){
+      if(authTokens && user){
         getCopro()
       }else{
         logoutUser()
@@ -59,7 +63,9 @@ function Copropriete() {
           if (Array.isArray(data)) {
               setCopros(data); 
               setCoproprietes(data);
-          } else {
+          } else if (response.status===401){
+            logoutUser()
+          }else {
               alert("Créer vos premières copropriétés via le site internet");
               setCopros([])
               setCoproprietes([])

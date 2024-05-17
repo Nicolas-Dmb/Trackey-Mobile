@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useCallback} from 'react';
 import AuthContext from '../context/AuthContext';
-import { Text, View, StyleSheet, Button, TouchableOpacity, TextInput, FlatList } from "react-native";
+import { Text, View, StyleSheet, Button, BackHandler, TouchableOpacity, TextInput, FlatList } from "react-native";
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const KeyItem = ({item}) => {
@@ -28,6 +28,15 @@ function ResultTrack(){
 
     //Clés enregistrées avec succès
     const[succes, setSucces]= useState([])
+    
+    //désactiver le backAction
+    const handleBackPress =() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Scan_Unique' }],
+        });
+        return true; // Empêche le comportement par défaut (retour)
+      }
 
     //Vérifier que l'utilisateur est identifié et si des départs de clés sont à faire ou non 
     useEffect(()=>{
@@ -39,13 +48,35 @@ function ResultTrack(){
                 let matches = keyError.filter(key => key.unique===ListKey[i].unique)
                 //Si la clé est en Retour/Départ ou en Retour
                 if (matches.length === 0){
-                    const cle = ListKey[i]
+                    let cle = ListKey[i]
                     setSucces(prevKey=>([...prevKey,cle]))
+                }else{
+                    alert(`Error pour ${ListKey[i].name}, info: ${keyError[i].name}:${keyError[i].message} `)
                 }
                 i++
             }
         }
-    },[ListKey, keyError])
+        //désactiver le backAction
+        const unsubscribe = navigation.addListener('blur', () => {
+            handleBackPress();
+        });
+        return unsubscribe;
+    },[])
+    //Activer desactiver backAction si focus ou non 
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+              handleBackPress();
+              return true;
+            };
+      
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      
+            return () => {
+              BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+            };
+          }, [handleBackPress])
+      );
 
     return(
         <View style={styles.container}>
@@ -70,35 +101,40 @@ function ResultTrack(){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width:'100%',
         flexDirection: "column",//obligatoire pour avoir un scroll
         alignItems:'center',//obligatoire pour avoir un scroll
       },
     liste:{
         width:'100%',
+        margin:'auto'
     },  
     item: {
         backgroundColor:'#EEF6D6',
-        padding: 30,
+        height: 30,
+        width:'90%',
+        flexDirection: 'column',
+        justifyContent:'space-between',
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
     haut: {
         flex: 1,
+        width:'90%',
         flexDirection: 'row',
-        alignItems:'center',
+        justifyContent:'space-between',
       },
     bas: {
         flex: 1,
-        flexDirection: "column",
-        justifyContent:"Center",
-        alignItems:'center',
+        width:'90%',
+        flexDirection: "row",
+        textAlign:'center',
       },
     name: {
       flex:1,
       fontWeight: 'bold',
     },
     acces:{
-      marginLeft:'10%',
       flex:1,
     },
     available: {
