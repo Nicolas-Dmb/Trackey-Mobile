@@ -17,8 +17,8 @@ const Account = () => {
     const [password, setPassword] = useState('')
 
     return (user ? (
-        <View style={globalStyles.page}>
-            <TouchableOpacity style={globalStyles.button} onPress={() => logoutUser}>
+        <View style={globalStyles.deconnectPage}>
+            <TouchableOpacity style={globalStyles.button} onPress={() => logoutUser()}>
                 <Text style={globalStyles.textForm}>Déconnexion</Text>
             </TouchableOpacity>
         </View>):(
@@ -32,7 +32,7 @@ const Account = () => {
                     value = {email}
                     onChangeText = {setEmail}
                     keyboardType="email-address"/>
-
+                
                 <Text style={globalStyles.textForm}>Mot de Passe:</Text>
                 <TextInput
                     style={globalStyles.textInput}
@@ -40,14 +40,16 @@ const Account = () => {
                     value = {password}
                     onChangeText = {setPassword}
                     secureTextEntry={true} />
-                <TouchableOpacity style={globalStyles.button} onPress={() => navigation.navigate('Mot de passe oublié')}>
-                    <Text style={globalStyles.textForm}>Mot de passe oublié</Text>
+                <View style={globalStyles.inlineContainer}>
+                <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate('Mot de passe oublié')}>
+                    <Text style={globalStyles.text}>Mot de passe oublié</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={globalStyles.smallButton} onPress={() => Linking.openURL('https://trackey.fr/signIn')}>
+                    <Text style={globalStyles.text}>Créer un compte</Text>
+                </TouchableOpacity>
+                </View>
                 <TouchableOpacity style={globalStyles.button} onPress={() => loginUser(email, password)}>
                     <Text style={globalStyles.textForm}>Connexion</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={globalStyles.button} onPress={() => Linking.openURL('https://trackey.fr/signIn')}>
-                    <Text style={globalStyles.textForm}>Créer un compte</Text>
                 </TouchableOpacity>
             </View>
         </View>)

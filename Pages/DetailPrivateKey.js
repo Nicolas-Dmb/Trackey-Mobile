@@ -1,7 +1,9 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
-import { StyleSheet, Text,Image, View, Linking, Button,  FlatList, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text,Image, View, Linking, Button,  FlatList, TouchableOpacity, SafeAreaView} from 'react-native';
 import AuthContext from '../context/AuthContext';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
+import Header from '../Components/Header.js'
+import { globalStyles } from '../styles/GlobalStyles';
 
 
 
@@ -12,11 +14,15 @@ function formatDate(dateString){
 const ListTracks=({item}) => {
     return (
         <TouchableOpacity
-        style={styles.item}>
-            <Text style={styles.entreprise}>{item.entreprise}</Text>
-            <Text style={styles.depart}>Départ: {formatDate(item.depart)}- Retour : {item.retour!==null && formatDate(item.retour)}</Text>
-            <Text >{item.tel}</Text>
-            <Text >{item.notes}</Text>
+        style={styles.Etiquette}>
+            <View style={styles.listItem}>
+                <Text style={styles.numero}>{item.entreprise}</Text>
+                <Text style={styles.name} >{item.tel}</Text>
+            </View>
+            <View style={styles.listColumnItem} >
+                <Text style={styles.depart}>Départ: {formatDate(item.depart)}- Retour : {item.retour!==null && formatDate(item.retour)}</Text>
+                <Text style={styles.adresse}>{item.notes}</Text>
+            </View>
         </TouchableOpacity>
     )
 }
@@ -24,6 +30,7 @@ function DetailPrivateKey(){
     //Auth
     const{contextData} = useContext(AuthContext)
     let{authTokens} = contextData; 
+    const{user} = contextData;
     let {logoutUser} = contextData;
     const navigation = useNavigation()
     const [count, setCount] = useState(0);
@@ -37,12 +44,28 @@ function DetailPrivateKey(){
     const[authorize, setAuthorize]= useState(true)
 
     useEffect(()=>{
-        if(authTokens){
+        if (authTokens && user){
             getKey()
         }else{
             logoutUser()
         }
-    },[])
+    },[user, authTokens, logoutUser])
+
+    useFocusEffect(
+        useCallback(() => {
+          const loadData = async () => {
+            setTimeout(() => {
+                if(authTokens && user){
+                    getKey()
+                }else{
+                    logoutUser()
+                }
+                setCount(c => c + 1);
+            }, 3000);
+          };
+          loadData();
+        }, [authTokens, logoutUser, user])
+      );
 
     let getKey = async() =>{
         let response = await fetch (`https://www.apitrackey.fr/api/PrivateKey/${idKey}/`,{
@@ -61,60 +84,84 @@ function DetailPrivateKey(){
             alert("Une erreur s'est produite")
        }
     }
-
-    useFocusEffect(
-        useCallback(() => {
-          const loadData = async () => {
-            setTimeout(() => {
-                if(authTokens){
-                    getKey()
-                }else{
-                    logoutUser()
-                }
-                setCount(c => c + 1);
-            }, 3000);
-          };
-          loadData();
-        }, [authTokens, logoutUser])
-      );
     
     return(authorize?(
-        <View className='Main'>
-            <View className='firstFloor'>
-                <Text>Propriétaire : {key.name}</Text>
-                <Button
-                title="modifier la clé"
-                onPress={() => navigation.navigate("ModifPrivateKey", {copro: copro, key: key})}
-                />
-                <Image source={{ uri: key.image }} style={{ width: 200, height: 200 }} alt='image des clés'/>
-                <Text className='acces'>Accès : <Text>{key.acces}</Text></Text>
-                <Text className='available'>Disponible : {key.available ? 
+        <View style={globalStyles.page}>
+        <Header title={`Clé : ${key.name}`}/>
+        <View style={height='100%'}>
+        <SafeAreaView style={backgroundColor='#D3E7A6'}>
+            <View style={styles.page}>
+                <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate("ModifPrivateKey", {copro: copro, key: key})}>
+                    <Text>Modifier la clé</Text>
+                </TouchableOpacity>
+                <Image source={{ uri: key.image }} style={{ width: 300, height: 300 }} alt='image des clés'/>
+                <Text style={globalStyles.textForm}>Accès : <Text>{key.acces}</Text></Text>
+                <Text style={globalStyles.textForm}>Disponible : {key.available ? 
                     (<Text>Disponible</Text>):
                     (<Text>Indisponible</Text>)}
                 </Text>
             </View>
             <FlatList
                 data={tracks}
+                style={styles.liste}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => <ListTracks item={item} />}
             />
+        </SafeAreaView>
+        </View>
         </View>):( <Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)
     )
 }
 const styles = StyleSheet.create({
-    item: {
-      backgroundColor:'#EEF6D6',
-      flexDirection: 'row',
-      padding: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
+    image:{
+      width:25,
+      height:25
     },
-    entreprise: {
-      marginRight: 10,
+    page:{
+      flexDirection:'column',
+      width:'100%',
+      gap:'11px',
+      alignItems:'center',
+      marginTop:'4%',
+    },
+    liste:{
+      marginTop:'10%',
+      width:'100%',
+    },
+    Etiquette:{
+      flexDirection:'column',
+      width:'100%',
+      padding: 10,
+      borderBottomWidth: 1,
+      fontWeight:'bold',
+      borderBottomColor: '#ccc',
+      justifyContent:'space-between',
+      backgroundColor:'#D3E7A6',
+
+    },  
+    listItem:{
+      flexDirection:'row',
+      width:'100%',
+      justifyContent:'space-between',
+
+    },
+    listColumnItem:{
+        flexDirection:'column',
+        width:'100%',
+        justifyContent:'space-between',
+    },
+    numero: {
       fontWeight: 'bold',
     },
-    depart: {
-      flex: 1,
+    name:{
+      marginLeft:'3%'
     },
+    adresse: {
+      fontStyle: 'italic',
+      textAlign:'center',
+    },
+    depart:{
+        textAlign:'center',
+    }
   });
 export default DetailPrivateKey;

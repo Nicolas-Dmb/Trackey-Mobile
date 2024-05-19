@@ -35,7 +35,7 @@ function AccountStackNavigator(){
 
 function DataStackNavigator(){
   return(
-    <DataStack.Navigator>
+    <DataStack.Navigator screenOptions={{ headerShown: false}}>
       <DataStack.Screen name="Coproprietes" component={Copropriete} options={{title: 'Copropriétés'}}/>
       <DataStack.Screen name="Copropriété" component={DetailCopro} options={{id :'copro.id', title: 'copro.Numero'}}/>
       <DataStack.Screen name="DetailCommonKey" component={DetailCommonKey}/>
@@ -49,13 +49,7 @@ function DataStackNavigator(){
 }
 function ScanStackNavigator({ navigation }){
   return(
-    <ScanStack.Navigator    screenOptions={{
-      tabBarLabelStyle: {
-        fontSize: 16,  // Taille de police pour les noms des onglets
-      },
-      tabBarActiveTintColor: 'tomato',  // Couleur de l'onglet actif
-      tabBarInactiveTintColor: 'gray',  // Couleur des autres onglets
-    }}>
+    <ScanStack.Navigator screenOptions={{ headerShown: false}}>
       <ScanStack.Screen name="Scan_Unique" component={Scan}/>
       <ScanStack.Screen name="Erreur_Agence" component={Error_Key}/>
       <ScanStack.Screen name="Départ/Retour" component={CreateTrack}/>
@@ -102,7 +96,6 @@ const Nav=()=>{
             tabBarStyle: {borderTopLeftRadius: 30, borderTopRightRadius: 30, backgroundColor: '#F8FAF3', position: 'absolute', height: 80 },
             tabBarLabelStyle: { paddingBottom: 3 },
           })}
-          
           >
               <Tab.Screen name="Données" component={DataStackNavigator}/>
               <Tab.Screen name="Scan" component={ScanStackNavigator}/>
@@ -110,10 +103,19 @@ const Nav=()=>{
             </Tab.Navigator>
           </NavigationContainer>):
           (<NavigationContainer>
-              <Tab.Navigator initialRouteName="Compte" screenOptions={{ headerShown: false }}>
-                  <Tab.Screen name="Compte" component={AccountStackNavigator}/>
-              </Tab.Navigator>
+              <AccountStack.Navigator screenOptions={{ headerShown: false}}>
+              <AccountStack.Screen name="Connexion" component={Account}/>
+              <AccountStack.Screen name="Mot de passe oublié" component={MPoublie}/>
+              </AccountStack.Navigator>
           </NavigationContainer>)
   );
 }
 export default Nav;
+
+/*
+          (<NavigationContainer>
+              <Tab.Navigator initialRouteName="Compte" screenOptions={{ headerShown: false }}>
+                  <Tab.Screen name="Compte" component={AccountStackNavigator}/>
+              </Tab.Navigator>
+          </NavigationContainer>)
+*/

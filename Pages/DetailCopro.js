@@ -1,16 +1,19 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
 import AuthContext from '../context/AuthContext';
-import { StyleSheet, Text, View, Linking, Button,  FlatList, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Linking, Button,  FlatList, TouchableOpacity, ScrollView, SafeAreaView} from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import Header from '../Components/Header.js'
+import { globalStyles } from '../styles/GlobalStyles';
+
 
 const ListKeyCommon=({item, copro}) => {
     const navigation = useNavigation()
     return (
         <TouchableOpacity onPress={()=> navigation.navigate("DetailCommonKey",{state: item, copro: copro})}
-        style={item.available ? (styles.item):(styles.reditem)}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.acces}>{item.acces}</Text>
-            <Text style={styles.available}>{item.available ? ('Disponible'):('Indisponible')}</Text>
+        style={item.available ? (globalStyles.Etiquette1):(globalStyles.Etiquette2)}>
+            <Text style={globalStyles.Attri1}>{item.name}</Text>
+            <Text style={globalStyles.Attri2}>{item.acces}</Text>
+            <Text style={globalStyles.Attri3}>{item.available ? ('Disponible'):('Indisponible')}</Text>
         </TouchableOpacity>
     )
 }
@@ -18,10 +21,10 @@ const ListKeyPrivate=({item, copro}) => {
     const navigation = useNavigation()
     return (
         <TouchableOpacity onPress={()=> navigation.navigate("DetailPrivateKey",{state: item, copro: copro })}
-        style={item.available ? (styles.item):(styles.reditem)}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.acces}>{item.acces}</Text>
-            <Text style={styles.available}>{item.available ? ('Disponible'):('Indisponible')}</Text>
+        style={item.available ? (globalStyles.Etiquette1):(globalStyles.Etiquette2)} scrollEnabled={false}>
+            <Text style={globalStyles.Attri1}>{item.name}</Text>
+            <Text style={globalStyles.Attri2}>{item.acces}</Text>
+            <Text style={globalStyles.Attri3}>{item.available ? ('Disponible'):('Indisponible')}</Text>
         </TouchableOpacity>
     )
 }
@@ -41,12 +44,28 @@ function DetailCopro(){
     const[privatekeys, setPrivatekeys] = useState([])
     
     useEffect(()=> {
-        if (authTokens){
-            getCopropriete()
-        }else{
+        if (!user || !authTokens){
             logoutUser()
+        }else{
+            getCopropriete()
         }
-    },[])
+    },[user, authTokens])
+
+    useFocusEffect(
+        useCallback(() => {
+          const loadData = async () => {
+            setTimeout(() => {
+                if (authTokens && user){
+                    getCopropriete()
+                }else{
+                    logoutUser()
+                }
+                setCount(c => c + 1);
+            }, 3000);
+          };
+          loadData();
+        }, [authTokens, logoutUser])
+      );
 
     let getCopropriete = async() =>{
         let response = await fetch(`https://www.apitrackey.fr/api/Copropriete/${id}/`,{
@@ -66,29 +85,18 @@ function DetailCopro(){
             setCommonkeys([]);
             setPrivatekeys([]);
         }}
-
-    useFocusEffect(
-        useCallback(() => {
-          const loadData = async () => {
-            setTimeout(() => {
-                if (authTokens){
-                    getCopropriete()
-                }else{
-                    logoutUser()
-                }
-                setCount(c => c + 1);
-            }, 3000);
-          };
-          loadData();
-        }, [authTokens,logoutUser])
-      );
    
     return(
-        <View className='Main'>
-            <View className='Partie'>
-                <View className='clé_commune'>
-                    <Text>Clés partie commune:</Text>
-                    <Button  title="Nouvelle clé commune" onPress={()=> navigation.navigate("CreateCommonKey",{ id : copropriete.id , copropriete: copropriete})}/>
+        <View style={backgroundColor='#FCFDFA'}>
+        <Header title={copropriete.name}/>
+        <View style={height='100%'}>
+        <SafeAreaView style={backgroundColor='#D3E7A6'}>
+            <View style={globalStyles.containerkey}>
+                <View style={globalStyles.inlineContainer}>
+                    <Text style={globalStyles.textForm}>Clés communes:</Text>
+                    <TouchableOpacity style={globalStyles.smallButton} onPress={() =>  navigation.navigate("CreateCommonKey",{ id : copropriete.id , copropriete: copropriete})}>
+                        <Text>Nouvelle clé commune</Text>
+                    </TouchableOpacity>
                 </View>
                 <FlatList
                     data={commonkeys}
@@ -96,10 +104,12 @@ function DetailCopro(){
                     renderItem={({ item }) => <ListKeyCommon item={item} copro={copropriete}/>}
                 />
             </View>
-            <View className='Partie'>
-                <View className='clé_privative'>
-                    <Text>Clés partie privative:</Text>
-                    <Button title="Nouvelle clé privative" onPress={()=> navigation.navigate("CreatePrivateKey", {id : copropriete.id , copropriete: copropriete})}/>
+            <View style={globalStyles.containerkey}>
+                <View style={globalStyles.inlineContainer}>
+                    <Text style={globalStyles.textForm}>Clés privatives:</Text>
+                    <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate("CreatePrivateKey", {id : copropriete.id , copropriete: copropriete})}>
+                        <Text>Nouvelle clé privative</Text>
+                    </TouchableOpacity>
                 </View>
                 <FlatList
                     data={privatekeys}
@@ -107,6 +117,8 @@ function DetailCopro(){
                     renderItem={({ item }) => <ListKeyPrivate item={item} copro={copropriete} />}
                 />
             </View>
+        </SafeAreaView>
+        </View>
         </View>
     )
 }

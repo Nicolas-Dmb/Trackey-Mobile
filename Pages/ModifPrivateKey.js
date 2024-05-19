@@ -1,13 +1,16 @@
 import React, {useContext, useState} from 'react';
 import AuthContext from '../context/AuthContext';
-import { StyleSheet, Text,TextInput, View, Button, Image} from 'react-native';
+import { StyleSheet, Text,TextInput, View, Button, Image,  TouchableOpacity, Alert} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import Header from '../Components/Header.js'
+import { globalStyles } from '../styles/GlobalStyles';
 
 function ModifPrivateKey(){
     const{contextData} = useContext(AuthContext)
     let{authTokens} = contextData; 
     let{user}= contextData
+    let{logoutUser}=contextData
     //info copro
     const route = useRoute()
     const {key} = route.params || {}
@@ -20,6 +23,15 @@ function ModifPrivateKey(){
     const [image, setImage] = useState(null)
 
     //Image
+    const createTwoButtonAlert = () =>
+        Alert.alert('Photo','Comment voulez vous récupérer la photo ?', [
+          {
+            text: 'Prendre une photo',
+            onPress:()=>takePhoto(),
+          },
+          {text: 'Selectionner une photo', onPress:()=>pickImage(),},
+        ]);
+    
     const pickImage = async () => {
         // Laisser l'utilisateur choisir une image depuis la galerie
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -73,23 +85,58 @@ function ModifPrivateKey(){
         })
         if (response.ok) {
             navigation.goBack()
-        } else {
+        } else if (response.status===401){
+            logoutUser()
+        }else {
             alert('Nom de clé déjà utilisée');
         }
     }
 
     return(
-        <View className='Main'>
-                <Text>Nom du propriétaire :</Text>
-                    <TextInput placeholder='Nom' value={name} onChangeText={setName}/>
-                <Text>Accès :</Text>
-                    <TextInput placeholder='Accès' value={acces} onChangeText={setAcces} maxLength={27}/>
-                <Text>Photo des clés :</Text>
-                    <Button title="Pick an image from camera roll" onPress={pickImage} />
-                    <Button title="Take a photo" onPress={takePhoto} />
-                    {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200 }}/>):(<Image source={{ uri: key.image }} style={{ width: 200, height: 200 }}/>)}
-                <Button title='Valider' onPress={()=>PutKey()}/>
+        <View style={globalStyles.page}>
+        <Header title='Modifier'/>
+                <Text style={styles.textForm}>Nom du propriétaire :</Text>
+                    <TextInput style={styles.textInput} placeholder='Nom' value={name} onChangeText={setName}/>
+                <Text style={styles.textForm}>Accès :</Text>
+                    <TextInput style={styles.textInput} placeholder='Accès' value={acces} onChangeText={setAcces} maxLength={27}/>
+                <Text style={styles.textForm}>Photo des clés :</Text>
+                    <TouchableOpacity style={globalStyles.smallButton} onPress={()=>createTwoButtonAlert()} >
+                        <Text style={globalStyles.text}>Photo</Text>
+                    </TouchableOpacity>
+                    {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, margin:10 }}/>):(<Image source={{ uri: key.image }} style={{ width: 200, height: 200, margin:10 }}/>)}
+                    <TouchableOpacity style={styles.button} onPress={()=>PutKey()} >
+                        <Text style={globalStyles.text}>Valider</Text>
+                    </TouchableOpacity>
         </View>
     )
 }
+const styles = StyleSheet.create({
+    button:{
+        width: '70%',
+        height: 50,
+        backgroundColor: '#D3E7A6',
+        borderRadius: 20,
+        borderWidth: 3,
+        borderColor: '#8DB654',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color:'#37401C',
+        margin:'10%',
+    },
+    textForm: {
+        fontSize: 20,
+        textAlign: 'center',
+        color:'#37401C',
+        marginTop:'10%',
+    },
+    textInput:{
+        fontSize:'20',
+        width:'80%',
+        height:'5%',
+        backgroundColor:'#EEF6D6',
+        borderRadius: 20,
+        textAlign:'center',
+        color:'#37401C',
+    }
+  });
 export default ModifPrivateKey;

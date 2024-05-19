@@ -1,20 +1,25 @@
 import React, {useState, useContext, useEffect, useCallback} from 'react';
-import { StyleSheet, Text, View, Linking, Button,  FlatList, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Linking, Button,Image,  FlatList, TouchableOpacity, SafeAreaView} from 'react-native';
 import { useNavigation, useFocusEffect} from '@react-navigation/native';
 import PopupOTP from '../Components/PopupOTP';
 import SearchBar from "../Components/SearchBar";
 import AuthContext from '../context/AuthContext';
+import { globalStyles } from '../styles/GlobalStyles';
+
 
 const CoproprieteItem = ({ copro }) => {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('Copropriété', { id : copro.id, title: copro.Numero })}
-      style={styles.item}>
-      <Text style={styles.numero}>{copro.Numero}</Text>
-      <Text style={styles.name}>{copro.name}</Text>
-      <Text style={styles.adresse}>{copro.adresse}</Text>
+      onPress={() => navigation.navigate('Copropriété', { id : copro.id, title: copro.Numero })} style={styles.Etiquette}>
+      <View style={styles.listItem}>
+        <Text style={styles.numero}>{copro.Numero}</Text>
+        <Text style={styles.name}>{copro.name}</Text>
+      </View>
+      <View>
+        <Text style={styles.adresse}>{copro.adresse}</Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -83,37 +88,79 @@ function Copropriete() {
               setPopup(true)
           }}
 
-  return(user?(
+  return(
+    <View style={backgroundColor='#FCFDFA'}>
+    {user?(
     popup? (<PopupOTP setPopup={setPopup} verif_mail={true}/>)
     :(
-    <View className='Main'>
-        <View className='lien'>
+    <View>
+      <View style={globalStyles.header}>
+        <SafeAreaView style={globalStyles.SearchBar}>
+          <Text style={globalStyles.title}>Copropriétés</Text>
+          <View style={styles.SearchBar}>
+            <Image source={require('../static/Search.png')} style={styles.image}/>
             <SearchBar setCopros={setCopros} coproprietes={coproprietes}/>
-            <Button title="Nouvelle Copropriété" onPress={()=> alert('Pour ajouter des copropriétés veuillez vous connecter au site web')}/>
-        </View>   
-        <FlatList
-          data={copros}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => <CoproprieteItem copro={item} />}
-        />
+          </View>
+        </SafeAreaView>
+      </View>
+      <View style={styles.page}>
+          <TouchableOpacity style={globalStyles.smallButton} onPress={() => alert('Pour ajouter des copropriétés veuillez vous connecter au site web')}>
+              <Text>Nouvelle Copropriété</Text>
+          </TouchableOpacity>
+          <FlatList
+            data={copros}
+            style={styles.liste}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({ item }) => <CoproprieteItem copro={item} />}
+          />
+      </View>
     </View>)
     ):(<Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)
+  }</View>
   )
 }
 
 const styles = StyleSheet.create({
-    item: {
-      flexDirection: 'row',
+    image:{
+      width:25,
+      height:25
+    },
+    SearchBar:{
+      flexDirection:'row',
+      width:'100%',
+    },
+    page:{
+      flexDirection:'column',
+      width:'100%',
+      gap:'11px',
+      alignItems:'center',
+      marginTop:'4%'
+    },
+    liste:{
+      height:'79%'
+    },
+    Etiquette:{
+      flexDirection:'column',
+      width:'100%',
       padding: 10,
       borderBottomWidth: 1,
+      fontWeight:'bold',
       borderBottomColor: '#ccc',
+      justifyContent:'space-between',
+      backgroundColor:'#D3E7A6',
+
+    },  
+    listItem:{
+      flexDirection:'row',
+      width:'100%',
+      justifyContent:'space-between',
+
     },
     numero: {
-      marginRight: 10,
       fontWeight: 'bold',
     },
-    name: {
-      flex: 1,
+    name:{
+      marginLeft:'3%'
     },
     adresse: {
       fontStyle: 'italic',
