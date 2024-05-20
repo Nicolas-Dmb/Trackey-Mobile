@@ -120,6 +120,10 @@ export const globalStyles = StyleSheet.create({
     },
     supprimer:{
         fontStyle: 'normal',
+        fontWeight:'bold',
+        backgroundColor:'#DB0D0F',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     //Form
     textForm: {

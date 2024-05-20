@@ -1,7 +1,9 @@
 import React, {useContext, useEffect, useState, useCallback} from 'react';
 import AuthContext from '../context/AuthContext';
-import { Text, View, StyleSheet, Button, BackHandler, TouchableOpacity, TextInput, FlatList } from "react-native";
+import { Text, View, StyleSheet, Button, BackHandler, TouchableOpacity, TextInput, FlatList, SafeAreaView } from "react-native";
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
+import { globalStyles } from '../styles/GlobalStyles';
+
 
 const KeyItem = ({item}) => {
    return (
@@ -79,40 +81,49 @@ function ResultTrack(){
       );
 
     return(
-        <View style={styles.container}>
+        <View>
+          <View style={globalStyles.header}>
+            <SafeAreaView style={globalStyles.SearchBar}>
+              <Text style={globalStyles.title}>Résultat</Text>
+            </SafeAreaView>
+          </View>
+          <View style={styles.page}>
             {succes.length!==0? (
             <View>
-                <Text>{succes.length > 1 ? 'Toutes les clés ci-dessous ont été enregistrées avec succès !':'Clé enregistrée avec succès :'}</Text>
+                <Text style={globalStyles.textForm}>{succes.length > 1 ? 'Toutes les clés ci-dessous ont été enregistrées avec succès !':'Clé enregistrée avec succès :'}</Text>
                 <FlatList
-                style = {styles.liste}
                 data={succes}
+                style={styles.liste}
                 keyExtractor={item => item.unique.toString()}
                 renderItem={({ item }) => <KeyItem item={item}/>}
                 />
             </View>):(
-            <View>
-                <Text>Aucune clé n'a pu être identifiée. Veuillez réessayer ou contacter le support : contact@trackey.fr</Text>
-            </View>
+                <Text style={globalStyles.textForm}>Aucune clé n'a pu être identifiée. Veuillez réessayer ou contacter le support : contact@trackey.fr</Text>
             ) }
-            <Button title="Page principale" onPress={()=>navigation.navigate("Scan_Unique")}/>
+            <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate("Scan_Unique")}>
+                        <Text>Page principale</Text>
+            </TouchableOpacity>
+            </View>
         </View>
     )
 }
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width:'100%',
-        flexDirection: "column",//obligatoire pour avoir un scroll
-        alignItems:'center',//obligatoire pour avoir un scroll
-      },
+  page:{
+    flexDirection:'column',
+    width:'100%',
+    gap:'11px',
+    alignItems:'center',
+    marginTop:'4%'
+  },
     liste:{
         width:'100%',
-        margin:'auto'
+        margin:'auto',
+        height:'70%',
     },  
     item: {
         backgroundColor:'#EEF6D6',
         height: 30,
-        width:'90%',
+        width:'100%',
         flexDirection: 'column',
         justifyContent:'space-between',
         borderBottomWidth: 1,
@@ -120,13 +131,13 @@ const styles = StyleSheet.create({
     },
     haut: {
         flex: 1,
-        width:'90%',
+        width:'100%',
         flexDirection: 'row',
         justifyContent:'space-between',
       },
     bas: {
         flex: 1,
-        width:'90%',
+        width:'100%',
         flexDirection: "row",
         textAlign:'center',
       },
@@ -139,6 +150,7 @@ const styles = StyleSheet.create({
     },
     available: {
       flex:1,
+      textAlign:'center',
     },
     copro:{
       flex:1,

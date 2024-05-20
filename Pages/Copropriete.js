@@ -32,19 +32,19 @@ function Copropriete() {
   let {logoutUser} = contextData;
 
   
-  const[popup, setPopup] = useState()
   const navigation = useNavigation();
   const[copros, setCopros]=useState([])
+  const[popup, setPopup]=useState(false)
   const[coproprietes, setCoproprietes] = useState([]) //les valeurs de copros sont stockées pour les récupérers si copros est changés et qu'on veut la reinitialisé
   
   useEffect(()=>{
     if(!user || !authTokens){
       logoutUser()
     }else{
-      setPopup(false)
       getUser()
+      getCopro()
     }
-  },[user])
+  },[user, authTokens])
 
   useFocusEffect(
     useCallback(() => {
@@ -85,14 +85,14 @@ function Copropriete() {
           });
           let data = await response.json()
           if (data.email_verif === false) {
-              setPopup(true)
+            setPopup(true)
+          }else if (response.status===401){
+            logoutUser()
           }}
 
   return(
     <View style={backgroundColor='#FCFDFA'}>
-    {user?(
-    popup? (<PopupOTP setPopup={setPopup} verif_mail={true}/>)
-    :(
+    {user?(popup?<PopupOTP setPopup={setPopup}/>:
     <View>
       <View style={globalStyles.header}>
         <SafeAreaView style={globalStyles.SearchBar}>
@@ -114,9 +114,8 @@ function Copropriete() {
             renderItem={({ item }) => <CoproprieteItem copro={item} />}
           />
       </View>
-    </View>)
-    ):(<Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)
-  }</View>
+    </View>):(<Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)}
+    </View>
   )
 }
 

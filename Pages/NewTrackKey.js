@@ -2,6 +2,8 @@ import React, {useContext, useEffect, useState} from 'react';
 import AuthContext from '../context/AuthContext';
 import { Text, View, StyleSheet, Button, TouchableOpacity, TextInput, FlatList } from "react-native";
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
+import Header from '../Components/Header.js'
+import { globalStyles } from '../styles/GlobalStyles';
 
 const KeyItem = ({item}) => {
    return (
@@ -12,7 +14,7 @@ const KeyItem = ({item}) => {
             <Text style={styles.type}>{item.type?'Commune':'Privative'}</Text>
         </View>
         <View style={styles.bas}>
-            <Text style={styles.available}>Action:{item.action===null?('Retour/Départ'):(item.action ?('Départ'):('Retour'))}</Text>
+            <Text style={styles.available}>Action: {item.action===null?('Retour/Départ'):(item.action ?('Départ'):('Retour'))}</Text>
             <Text style={styles.message}>{item.message}</Text>
         </View>
     </TouchableOpacity>
@@ -104,10 +106,8 @@ function CreateTrack(){
             });
             if (response.status===202){
                 //si retour correctement effectué alors on affecte available à true pour la clé
-                alert(`202${info.name}`)
                 updateAvailable(i)
             }else if (response.status === 307){
-                alert(`307${info.name}`)
                 const key = {
                     ...info,
                     message:'retour impossible',
@@ -166,7 +166,7 @@ function CreateTrack(){
         }catch{
             const donnee = {
                 ...key,
-                message:"Catch NewTrack",
+                message:"Erreur lors du départ de la clé",
                 unique_Error: key.unique+'Depart',
             }
             setKeyError(ErrorKey =>[ ...ErrorKey, donnee])
@@ -175,9 +175,9 @@ function CreateTrack(){
 
     return(Error ?(
         <View style={styles.container}>
-            <Text>Les clés suivantes n'ont pas pu être identifiées. Veuillez réessayer ou contacter le support : contact@trackey.fr</Text>
+             <Header title='Erreur'/>
+            <Text style={styles.textForm}>Une erreur s'est produite. Veuillez réessayer ou contacter le support : contact@trackey.fr</Text>
             <FlatList
-            style = {styles.liste}
             data={keyError}
             keyExtractor={item => item.unique_Error.toString()}
             renderItem={({ item }) => <KeyItem item={item}/>}
@@ -186,40 +186,63 @@ function CreateTrack(){
         </View>
         ):(
         <View style={styles.container}>
-            <Text>Nom de l'entreprise :</Text>
-                <TextInput style={styles.input} value={entreprise} onChangeText={setEntreprise} maxLength="30"/>
-            <Text>Numéro de téléphone :</Text>
-                <TextInput  style={styles.input} value={tel} keyboardType='numeric' onChangeText={setTel}/>
-            <Text>Remarques :</Text>
-                <TextInput style={styles.input} value={note} onChangeText={setNote}/>
-            <Button title='Valider' onPress={()=>SendForm()}/>
+        <Header title='Départ de clé(s)'/>
+            <Text style={styles.textForm}>Nom de l'entreprise :</Text>
+                <TextInput style={styles.textInput} value={entreprise} onChangeText={setEntreprise} maxLength="30"/>
+            <Text style={styles.textForm}>Numéro de téléphone :</Text>
+                <TextInput  style={styles.textInput} value={tel} keyboardType='numeric' onChangeText={setTel}/>
+            <Text style={styles.textForm}>Remarques :</Text>
+                <TextInput style={styles.textInput} value={note} onChangeText={setNote}/>
+            <TouchableOpacity style={styles.button} onPress={()=>SendForm()} >
+                        <Text style={globalStyles.text}>Valider</Text>
+            </TouchableOpacity>
         </View>
+
     )
 )
 }
 const styles = StyleSheet.create({
+    button:{
+        width: '70%',
+        height: 50,
+        backgroundColor: '#D3E7A6',
+        borderRadius: 20,
+        borderWidth: 3,
+        borderColor: '#8DB654',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color:'#37401C',
+        margin:'10%',
+    },
     container: {
         flex: 1,
         flexDirection: "column",//obligatoire pour avoir un scroll
         alignItems:'center',//obligatoire pour avoir un scroll
-      },
-    input:{
-        height:'50px',
-        width:'40%',
-        backgroundColor: '#EEF6D6',
-        borderColor: '#ABC978',
-        borderRadius: '20px',
-        margin:'10px',
-        textAlign:'center',
-    },
-    liste:{
         width:'100%',
-    },  
+        backgroundColor:'#FCFDFA',
+      },
+      textForm: {
+        fontSize: 20,
+        textAlign: 'center',
+        color:'#37401C',
+        marginTop:'10%',
+    },
+    textInput:{
+        fontSize:'20',
+        width:'80%',
+        height:'5%',
+        backgroundColor:'#EEF6D6',
+        borderRadius: 20,
+        textAlign:'center',
+        color:'#37401C',
+    }, 
     item: {
         backgroundColor:'#EEF6D6',
         padding: 30,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
+        width:'100%',
+        gap:10,
     },
     haut: {
         flex: 1,
@@ -231,6 +254,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent:"Center",
         alignItems:'center',
+        gap:10,
       },
     name: {
       flex:1,
@@ -248,6 +272,7 @@ const styles = StyleSheet.create({
     },
     message:{
         flex:1,
+        fontWeight:'bold',
     }
   });
 export default CreateTrack;

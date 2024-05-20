@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext,useCallback} from "react";
-import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, Image} from "react-native";
+import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, Image, SafeAreaView} from "react-native";
 import { CameraView, useCameraPermissions} from "expo-camera";
 import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AuthContext from '../context/AuthContext';
+import Header from '../Components/Header.js'
 import { globalStyles } from '../styles/GlobalStyles';
 
 /*
@@ -25,7 +26,9 @@ const KeyItem = ({ item, setListKey, listKey}) => {
       );
     }
     return(
-          <Button style={globalStyles.supprimer} title='Supprimer' onPress={supprimer}/>
+          <TouchableOpacity style={globalStyles.supprimer} onPress={supprimer}>
+            <Text>Supprimer</Text>
+          </TouchableOpacity>
 )
   }
   const[onclick, setOnclick] = useState(0) //doit cliquer deux fois pour changer l'action
@@ -73,12 +76,25 @@ export default function App() {
         logoutUser()
       }else{
         //Si on refocus on supprime la liste scannée
+        getUser()
         setListKey([])
         setScan(false)
       }
     }, [])
   );
-
+  let getUser = async() =>{
+    let response = await fetch(`https://www.apitrackey.fr/api/user/account`,{
+        method:'GET',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': `Bearer ${authTokens.access}`}
+        });
+        let data = await response.json()
+        if (data.email_verif === false) {
+          navigation.navigate('Données')
+        }else if (response.status===401){
+          logoutUser()
+        }}
   //Requêtes 
   let getTrack = async (info) => {
     const response = await fetch(`https://www.apitrackey.fr/api/${info.type?'TrackC':'TrackP'}/update/${info.id}/info`, {
@@ -171,6 +187,11 @@ export default function App() {
 
   return (
     <View style={globalStyles.page}>
+      <View style={globalStyles.header}>
+        <SafeAreaView style={globalStyles.SearchBar}>
+          <Text style={globalStyles.title}>Scan</Text>
+        </SafeAreaView>
+      </View>
       <CameraView
         onBarcodeScanned={(event) =>scan? undefined: handleBarCodeScanned(event)} // dans tous les cas je le met permettant de laver la data (a voir si ca marche)
         barcodeScannerSettings={{
@@ -181,8 +202,12 @@ export default function App() {
       />
       {scan &&
       <View style={globalStyles.inlineContainer}>
-          <Button style={globalStyles.button} title="scanner d'autres clés" onPress={()=> setScan(false)}/> 
-          <Button style={globalStyles.button} title="Envoyer Questionnaire" onPress={()=> navigation.navigate("Départ/Retour", {Liste: listKey})}/>
+          <TouchableOpacity style={globalStyles.smallButton} onPress={() => setScan(false)}>
+              <Text>scanner d'autres clés</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate("Départ/Retour", {Liste: listKey})}>
+              <Text>Gérer les clés</Text>
+          </TouchableOpacity>
       </View>}
       <FlatList
       style = {globalStyles.liste}

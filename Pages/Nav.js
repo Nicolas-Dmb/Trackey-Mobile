@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Image, Text} from "react-native";
 import { NavigationContainer} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -19,10 +19,12 @@ import Error_Key from './Error_key.js';
 import CreateTrack from './NewTrackKey.js';
 import ResultTrack from './ResultNewTrack.js';
 
+
 const Tab = createBottomTabNavigator();
 const AccountStack = createStackNavigator();
 const DataStack = createStackNavigator();
 const ScanStack = createStackNavigator();
+
 
 function AccountStackNavigator(){
   return(
@@ -36,7 +38,7 @@ function AccountStackNavigator(){
 function DataStackNavigator(){
   return(
     <DataStack.Navigator screenOptions={{ headerShown: false}}>
-      <DataStack.Screen name="Coproprietes" component={Copropriete} options={{title: 'Copropriétés'}}/>
+      <DataStack.Screen name="Coproprietes" component={Copropriete}/>
       <DataStack.Screen name="Copropriété" component={DetailCopro} options={{id :'copro.id', title: 'copro.Numero'}}/>
       <DataStack.Screen name="DetailCommonKey" component={DetailCommonKey}/>
       <DataStack.Screen name="DetailPrivateKey" component={DetailPrivateKey}/>
@@ -61,6 +63,7 @@ function ScanStackNavigator({ navigation }){
 const Nav=()=>{
   const contextData = useContext(AuthContext);
     const { user } = contextData
+  
   return (
       user? 
         (<NavigationContainer>
@@ -112,10 +115,3 @@ const Nav=()=>{
 }
 export default Nav;
 
-/*
-          (<NavigationContainer>
-              <Tab.Navigator initialRouteName="Compte" screenOptions={{ headerShown: false }}>
-                  <Tab.Screen name="Compte" component={AccountStackNavigator}/>
-              </Tab.Navigator>
-          </NavigationContainer>)
-*/
