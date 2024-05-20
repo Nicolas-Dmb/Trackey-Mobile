@@ -12,7 +12,7 @@ function MPoublie(){
     let sendEmail = async() =>{
         let formData = new FormData();
         formData.append('email', email);
-        let response = await fetch('http://127.0.0.1:8000/api/MPoublie/get',{
+        let response = await fetch('https://www.apitrackey.fr/api/MPoublie/get',{
             method:'POST',
             headers:{
                 'Content-Type': 'application/json'},
@@ -39,7 +39,7 @@ function MPoublie(){
                 onChangeText = {setEmail}
                 keyboardType="email-address"/>
             <Text style={styles.textForm}>{retour}</Text>
-            <TouchableOpacity style={styles.button} onPress={()=>sendEmail} >
+            <TouchableOpacity style={styles.button} onPress={sendEmail} >
                     <Text style={globalStyles.text}>Envoyer</Text>
             </TouchableOpacity>
             </View>     

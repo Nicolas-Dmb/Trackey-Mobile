@@ -72,7 +72,6 @@ export const globalStyles = StyleSheet.create({
         alignItems: 'center',
     },
     camera:{
-        borderRadius: '20%',
         marginTop:5,
         width:'90%',
         height:'40%',

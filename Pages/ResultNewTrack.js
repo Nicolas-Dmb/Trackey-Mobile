@@ -81,7 +81,7 @@ function ResultTrack(){
       );
 
     return(
-        <View>
+        <View style={backgroundColor='#FCFDFA'}>
           <View style={globalStyles.header}>
             <SafeAreaView style={globalStyles.SearchBar}>
               <Text style={globalStyles.title}>Résultat</Text>
