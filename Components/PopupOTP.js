@@ -47,11 +47,11 @@ function PopupOTP({setPopup}){
             </View>
             <SafeAreaView style={backgroundColor='#D3E7A6'}>
                 <View style={styles.page}>
-                    <Text style={globalStyles.text}>Avant de continuer veuillez vérifier votre adresse Email</Text>
-                    <Text style={globalStyles.text}>Veuillez récupérer le code reçu par Email</Text>
-                    <Text style={styles.textForm}> Code :</Text>
+                    <Text style={[globalStyles.text]}>Avant de continuer veuillez vérifier votre adresse Email</Text>
+                    <Text style={[globalStyles.text]}>Veuillez récupérer le code reçu par Email</Text>
+                    <Text style={[globalStyles.textForm, styles.marge]}> Code :</Text>
                         <TextInput style={styles.textInput} keyboardType='numeric' onChangeText={setOtp} />
-                    <TouchableOpacity style={globalStyles.smallButton} onPress={() => verifyOTP()}>
+                    <TouchableOpacity style={[globalStyles.smallButton, styles.marge]} onPress={() => verifyOTP()}>
                             <Text>Valider</Text>
                     </TouchableOpacity>
                 </View>
@@ -60,6 +60,9 @@ function PopupOTP({setPopup}){
     )
 }
 const styles = StyleSheet.create({
+    marge:{
+        margin:10,
+    },
     button:{
         width: '70%',
         height: 50,
@@ -85,10 +88,9 @@ const styles = StyleSheet.create({
         marginTop:30,
         color:'#37401C',
         width:'100%',
-        gap:'10px',
     },
     textInput:{
-        fontSize:'20',
+        fontSize:20,
         width:'80%',
         height:'5%',
         backgroundColor:'#EEF6D6',

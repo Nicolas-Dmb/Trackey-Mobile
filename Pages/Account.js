@@ -4,6 +4,7 @@ import AuthContext from '../context/AuthContext';
 import  MPoublie from './MPoublie.js';
 import { useNavigation } from '@react-navigation/native';
 import { globalStyles } from '../styles/GlobalStyles';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Account = () => {
 
@@ -16,7 +17,7 @@ const Account = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    return (user ? (
+    return (<SafeAreaProvider>{user ? (
         <View style={globalStyles.deconnectPage}>
             <TouchableOpacity style={globalStyles.button} onPress={() => logoutUser()}>
                 <Text style={globalStyles.textForm}>Déconnexion</Text>
@@ -52,7 +53,8 @@ const Account = () => {
                     <Text style={globalStyles.textForm}>Connexion</Text>
                 </TouchableOpacity>
             </View>
-        </View>)
+        </View>)}
+        </SafeAreaProvider>
     );
 };
 

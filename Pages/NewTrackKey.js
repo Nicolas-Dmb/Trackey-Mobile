@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
         marginTop:'10%',
     },
     textInput:{
-        fontSize:'20',
+        fontSize:20,
         width:'80%',
         height:'5%',
         backgroundColor:'#EEF6D6',
@@ -242,7 +242,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
         width:'100%',
-        gap:10,
     },
     haut: {
         flex: 1,
@@ -266,6 +265,7 @@ const styles = StyleSheet.create({
     },
     available: {
       flex:1,
+      margin:10,
     },
     copro:{
       flex:1,
@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
     message:{
         flex:1,
         fontWeight:'bold',
+        margin:10,
     }
   });
 export default CreateTrack;

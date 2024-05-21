@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext,useCallback} from "react";
-import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, Image, SafeAreaView} from "react-native";
+import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, Image, SafeAreaView, Dimensions} from "react-native";
 import { CameraView, useCameraPermissions} from "expo-camera";
 import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -7,17 +7,9 @@ import AuthContext from '../context/AuthContext';
 import Header from '../Components/Header.js'
 import { globalStyles } from '../styles/GlobalStyles';
 
-/*
+const screenHeight = Dimensions.get('window').height;
+const tabBarHeight = screenHeight;
 
-Il faut que j'intègre :
-- une liste des clés scannés en dessous de la camera avec une note soit retour soit départ
-- un bouton qui permet de lancer le questionnaire des départs
-- une page qui résume les requetes (mettre un try excep sur la requete de départ de clé au cas ou une clé n'arrive pas à s'envoyer en départ)
-- une gestion des user (on restart à la page d'origine si on deconnecte et on supprime les données scannées)
-- pas deux fois la même clé 
-- si c'est une clé retour on peut régler sur départ en même temps 
-
-*/
 const KeyItem = ({ item, setListKey, listKey}) => {
   const renderRightActions = (progress, dragX) => {
     const supprimer = () => {
@@ -123,7 +115,9 @@ export default function App() {
         alert("Aucune correspondance");
     } else if (response.status === 401) {
         logoutUser();
-    }
+    }else {
+      alert("Aucune correspondance");
+  }
   };
 
   useEffect(()=>{
@@ -209,13 +203,49 @@ export default function App() {
               <Text>Gérer les clés</Text>
           </TouchableOpacity>
       </View>}
+      <View style={styles.page}>
       <FlatList
-      style = {globalStyles.liste}
       data={listKey}
       keyExtractor={item => item.unique.toString()}
       renderItem={({ item }) => <KeyItem item={item} setListKey={setListKey} ListKey={listKey}/>}
       />
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  page:{
+    flexDirection:'column',
+    width:'100%',
+    marginTop:'4%',
+    height:tabBarHeight*0.30,
+  },
+  Etiquette:{
+    flexDirection:'column',
+    width:'100%',
+    padding: 10,
+    borderBottomWidth: 1,
+    fontWeight:'bold',
+    borderBottomColor: '#ccc',
+    justifyContent:'space-between',
+    backgroundColor:'#D3E7A6',
+
+  },  
+  listItem:{
+    flexDirection:'row',
+    width:'100%',
+    justifyContent:'space-between',
+
+  },
+  numero: {
+    fontWeight: 'bold',
+  },
+  name:{
+    marginLeft:'3%'
+  },
+  adresse: {
+    fontStyle: 'italic',
+  }
+});
 

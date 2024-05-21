@@ -1,5 +1,9 @@
 import { Component } from 'react';
-import { StyleSheet, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar, Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+const tabBarHeight = screenHeight;
 
 export const globalStyles = StyleSheet.create({
     text:{
@@ -59,7 +63,7 @@ export const globalStyles = StyleSheet.create({
     },
     containerkey:{
         flexDirection:'column',
-        height:334,
+        height:tabBarHeight*0.4,
     },
     smallButton:{
         width: '50%',
@@ -74,7 +78,7 @@ export const globalStyles = StyleSheet.create({
     camera:{
         marginTop:5,
         width:'90%',
-        height:'40%',
+        height:tabBarHeight*0.4,
     },
     //Liste
     liste:{
@@ -131,7 +135,7 @@ export const globalStyles = StyleSheet.create({
         color:'#37401C',
     },
     textInput:{
-        fontSize:'20',
+        fontSize:20,
         width:'80%',
         height:'8%',
         backgroundColor:'#EEF6D6',
@@ -155,7 +159,7 @@ export const globalStyles = StyleSheet.create({
     },
     header: {
         width: '100%',
-        height: '30px',  // Corrigez 'heigh' en 'height'
+        height: tabBarHeight*0.12,  // Corrigez 'heigh' en 'height'
         borderBottomEndRadius: 20, 
         borderBottomStartRadius: 20, // Pourcentage non supporté pour borderRadius, utilisez un nombre
         backgroundColor: '#F8FAF3',

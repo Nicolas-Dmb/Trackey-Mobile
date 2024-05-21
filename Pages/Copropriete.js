@@ -1,10 +1,16 @@
 import React, {useState, useContext, useEffect, useCallback} from 'react';
-import { StyleSheet, Text, View, Linking, Button,Image,  FlatList, TouchableOpacity, SafeAreaView} from 'react-native';
+import { StyleSheet, Text, View, Linking, Button,Image,  FlatList, TouchableOpacity, SafeAreaView, Dimensions, ScrollView} from 'react-native';
 import { useNavigation, useFocusEffect} from '@react-navigation/native';
 import PopupOTP from '../Components/PopupOTP';
 import SearchBar from "../Components/SearchBar";
 import AuthContext from '../context/AuthContext';
 import { globalStyles } from '../styles/GlobalStyles';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+const tabBarHeight = screenHeight;
 
 
 const CoproprieteItem = ({ copro }) => {
@@ -30,8 +36,7 @@ function Copropriete() {
   let {user} = contextData;
   let {authTokens} = contextData; 
   let {logoutUser} = contextData;
-
-  
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const[copros, setCopros]=useState([])
   const[popup, setPopup]=useState(false)
@@ -102,41 +107,43 @@ function Copropriete() {
             <SearchBar setCopros={setCopros} coproprietes={coproprietes}/>
           </View>
         </SafeAreaView>
-      </View>
-      <View style={styles.page}>
-          <TouchableOpacity style={globalStyles.smallButton} onPress={() => alert('Pour ajouter des copropriétés veuillez vous connecter au site web')}>
-              <Text>Nouvelle Copropriété</Text>
-          </TouchableOpacity>
-          <FlatList
-            data={copros}
-            style={styles.liste}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => <CoproprieteItem copro={item} />}
-          />
-      </View>
-    </View>):(<Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)}
+        </View>
+        <SafeAreaView>
+          <View style={styles.page}>
+              <TouchableOpacity style={[globalStyles.smallButton, styles.marge]} onPress={() => alert('Pour ajouter des copropriétés veuillez vous connecter au site web')}>
+                  <Text>Nouvelle Copropriété</Text>
+              </TouchableOpacity>
+              <FlatList
+                data={copros}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({ item }) => <CoproprieteItem copro={item} />}
+              />
+          </View>
+          </SafeAreaView>
+        </View>):(<Button title="Connexion" onPress={()=> navigation.navigate("Compte",{screen:"Connexion"})}/>)}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+    marge:{
+      marginBottom:10,
+    },
     image:{
       width:25,
-      height:25
+      height:25,
     },
     SearchBar:{
       flexDirection:'row',
       width:'100%',
+      alignItems:'center',
     },
     page:{
       flexDirection:'column',
       width:'100%',
-      gap:'11px',
       alignItems:'center',
-      marginTop:'4%'
-    },
-    liste:{
-      height:'79%'
+      marginTop:'4%',
+      height:tabBarHeight*0.78
     },
     Etiquette:{
       flexDirection:'column',

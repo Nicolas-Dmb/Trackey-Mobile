@@ -1,10 +1,13 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
 import AuthContext from '../context/AuthContext';
-import { StyleSheet, Text, View, Linking, Button,  FlatList, TouchableOpacity, ScrollView, SafeAreaView} from 'react-native';
+import { StyleSheet, Text, View, Linking, Button,  FlatList, TouchableOpacity, ScrollView, SafeAreaView, Dimensions} from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import Header from '../Components/Header.js'
 import { globalStyles } from '../styles/GlobalStyles';
 
+
+const screenHeight = Dimensions.get('window').height;
+const tabBarHeight = screenHeight;
 
 const ListKeyCommon=({item, copro}) => {
     const navigation = useNavigation()
@@ -89,7 +92,7 @@ function DetailCopro(){
     return(
         <View style={backgroundColor='#FCFDFA'}>
         <Header title={copropriete.name}/>
-        <View style={height='100%'}>
+        <View>
         <SafeAreaView style={backgroundColor='#D3E7A6'}>
             <View style={globalStyles.containerkey}>
                 <View style={globalStyles.inlineContainer}>
@@ -116,7 +119,7 @@ function DetailCopro(){
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ item }) => <ListKeyPrivate item={item} copro={copropriete} />}
                 />
-            </View>
+        </View>
         </SafeAreaView>
         </View>
         </View>

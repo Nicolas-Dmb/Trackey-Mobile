@@ -6,15 +6,23 @@ import { globalStyles } from '../styles/GlobalStyles';
 
 
 const KeyItem = ({item}) => {
+  const navigation = useNavigation()
+  const handleOnPress = ()=>{
+    navigation.navigate('Données', {
+      screen: item.type ? ('DetailCommonKey'):('DetailPrivateKey'),
+      params: { state:item, copro:item.copro }  // Exemple de paramètres
+    })
+  }
+
    return (
-    <TouchableOpacity style={styles.item}>
+    <TouchableOpacity style={styles.item} onPress={handleOnPress}>
         <View style={styles.haut}>
             <Text style={styles.copro}>{item.copro}</Text>
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.type}>{item.type?'Commune':'Privative'}</Text>
         </View>
         <View style={styles.bas}>
-            <Text style={styles.available}>Action:{item.action===null?('Retour/Départ'):(item.action ?('Départ'):('Retour'))}</Text>
+            <Text style={styles.available}>Action: {item.action===null?('Retour/Départ'):(item.action ?('Départ'):('Retour'))}</Text>
         </View>
     </TouchableOpacity>
     );
@@ -81,7 +89,7 @@ function ResultTrack(){
       );
 
     return(
-        <View style={backgroundColor='#FCFDFA'}>
+        <View style={styles.total}>
           <View style={globalStyles.header}>
             <SafeAreaView style={globalStyles.SearchBar}>
               <Text style={globalStyles.title}>Résultat</Text>
@@ -93,12 +101,12 @@ function ResultTrack(){
                 <Text style={globalStyles.textForm}>{succes.length > 1 ? 'Toutes les clés ci-dessous ont été enregistrées avec succès !':'Clé enregistrée avec succès :'}</Text>
                 <FlatList
                 data={succes}
-                style={styles.liste}
+                style={[styles.liste, styles.marge]}
                 keyExtractor={item => item.unique.toString()}
                 renderItem={({ item }) => <KeyItem item={item}/>}
                 />
             </View>):(
-                <Text style={globalStyles.textForm}>Aucune clé n'a pu être identifiée. Veuillez réessayer ou contacter le support : contact@trackey.fr</Text>
+                <Text style={[globalStyles.textForm, styles.marge]}>Aucune clé n'a pu être identifiée. Veuillez réessayer ou contacter le support : contact@trackey.fr</Text>
             ) }
             <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate("Scan_Unique")}>
                         <Text>Page principale</Text>
@@ -108,17 +116,23 @@ function ResultTrack(){
     )
 }
 const styles = StyleSheet.create({
+  marge:{
+    margin:11,
+  },
+  total:{
+    backgroundColor:'#FCFDFA',
+    height:'100%'
+  },
   page:{
     flexDirection:'column',
     width:'100%',
-    gap:'11px',
     alignItems:'center',
-    marginTop:'4%'
+    marginTop:'4%',
+    height:'70%'
   },
     liste:{
         width:'100%',
-        margin:'auto',
-        height:'70%',
+        marginTop:'10%',
     },  
     item: {
         backgroundColor:'#EEF6D6',

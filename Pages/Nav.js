@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Image, Text} from "react-native";
+import {Image, Text, Dimensions} from "react-native";
 import { NavigationContainer} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -24,6 +24,9 @@ const Tab = createBottomTabNavigator();
 const AccountStack = createStackNavigator();
 const DataStack = createStackNavigator();
 const ScanStack = createStackNavigator();
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+const tabBarHeight = screenHeight;
 
 
 function AccountStackNavigator(){
@@ -53,8 +56,8 @@ function ScanStackNavigator({ navigation }){
   return(
     <ScanStack.Navigator screenOptions={{ headerShown: false}}>
       <ScanStack.Screen name="Scan_Unique" component={Scan}/>
-      <ScanStack.Screen name="Erreur_Agence" component={Error_Key}/>
       <ScanStack.Screen name="Départ/Retour" component={CreateTrack}/>
+      <ScanStack.Screen name="Erreur_Agence" component={Error_Key}/>
       <ScanStack.Screen name="Résultats" component={ResultTrack}/>
     </ScanStack.Navigator>
   )
@@ -73,7 +76,7 @@ const Nav=()=>{
             tabBarIcon: ({ focused, color, size }) => {
               if (route.name === 'Scan') {
                 // Affiche un logo uniquement pour l'onglet 'Scan'
-                return <Image source={require('../static/scan.png')} style={{ width: 80, height: 80 }} />;
+                return <Image source={require('../static/scan.png')}  style={{ width: tabBarHeight<700 ? 60 : 80, height:tabBarHeight<70 ? 60 : 80 }} />;
               } else {
                 // Gestion des autres icônes avec Ionicons ou autre
                 const icons = {
@@ -92,11 +95,11 @@ const Nav=()=>{
                 return null; // Aucun texte pour 'Scan'
               }
               // Labels pour les autres onglets
-              return <Text style={{ color, fontSize: 18 }}>{route.name}</Text>;
+              return <Text style={{ color, fontSize: 18, paddingBottom: tabBarHeight<700 && 12}}>{route.name}</Text>;
             },
             tabBarActiveTintColor: '#37401C',
             tabBarInactiveTintColor: '#5C7C2F',
-            tabBarStyle: {borderTopLeftRadius: 30, borderTopRightRadius: 30, backgroundColor: '#F8FAF3', position: 'absolute', height: 80 },
+            tabBarStyle: {borderTopLeftRadius: 30, borderTopRightRadius: 30, backgroundColor: '#F8FAF3', position: 'absolute', height: tabBarHeight*0.08},
             tabBarLabelStyle: { paddingBottom: 3 },
           })}
           >

@@ -1,10 +1,12 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
-import { StyleSheet, Text,Image, View, Linking, Button,  FlatList, TouchableOpacity, SafeAreaView} from 'react-native';
+import { StyleSheet, Text,Image, View, Linking, Button,  FlatList, TouchableOpacity, SafeAreaView, Dimensions} from 'react-native';
 import AuthContext from '../context/AuthContext';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import Header from '../Components/Header.js'
 import { globalStyles } from '../styles/GlobalStyles';
 
+const screenHeight = Dimensions.get('window').height;
+const tabBarHeight = screenHeight;
 
 function formatDate(dateString){
     const options = { year: 'numeric', month: 'numeric', day: 'numeric'};
@@ -90,10 +92,10 @@ function DetailCommonKey(){
         <View style={height='100%'}>
         <SafeAreaView style={backgroundColor='#D3E7A6'}>
             <View style={styles.page}>
-                <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate("ModifCommonKey", {copro: copro, key: key})}>
+                <TouchableOpacity style={[globalStyles.smallButton, styles.marge]} onPress={() => navigation.navigate("ModifCommonKey", {copro: copro, key: key})}>
                     <Text>Modifier la clé</Text>
                 </TouchableOpacity>
-                <Image source={{ uri: key.image }} style={{ width: 300, height: 300 }} alt='image des clés'/>
+                <Image source={{ uri: key.image }} style={styles.image } alt='image des clés'/>
                 <Text style={globalStyles.textForm}>Accès : <Text>{key.acces}</Text></Text>
                 <Text style={globalStyles.textForm}>Disponibilité : {key.available ? 
                     (<Text>Disponible</Text>):
@@ -112,14 +114,17 @@ function DetailCommonKey(){
     )
 }
 const styles = StyleSheet.create({
+    marge:{
+      margin:11,
+    },
     image:{
-      width:25,
-      height:25
+      margin:11,
+      width: tabBarHeight*0.2, 
+      height: tabBarHeight*0.2,
     },
     page:{
       flexDirection:'column',
       width:'100%',
-      gap:'11px',
       alignItems:'center',
       marginTop:'4%',
     },

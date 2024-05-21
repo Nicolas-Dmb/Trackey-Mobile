@@ -1,10 +1,13 @@
 import React, {useContext, useState} from 'react';
 import AuthContext from '../context/AuthContext';
-import { StyleSheet, Text,TextInput, View, Button, Image,  TouchableOpacity, Alert} from 'react-native';
+import { StyleSheet, Text,TextInput, View, Button, Image,  TouchableOpacity, Alert, Dimensions} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import Header from '../Components/Header.js'
 import { globalStyles } from '../styles/GlobalStyles';
+
+const screenHeight = Dimensions.get('window').height;
+const tabBarHeight = screenHeight;
 
 function ModifPrivateKey(){
     const{contextData} = useContext(AuthContext)
@@ -103,7 +106,7 @@ function ModifPrivateKey(){
                     <TouchableOpacity style={globalStyles.smallButton} onPress={()=>createTwoButtonAlert()} >
                         <Text style={globalStyles.text}>Photo</Text>
                     </TouchableOpacity>
-                    {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, margin:10 }}/>):(<Image source={{ uri: key.image }} style={{ width: 200, height: 200, margin:10 }}/>)}
+                    {image ? (<Image source={{ uri: image }} style={{ width: tabBarHeight*0.2, height: tabBarHeight*0.2, margin:10 }}/>):(<Image source={{ uri: key.image }} style={{ width: tabBarHeight*0.2, height: tabBarHeight*0.2, margin:10 }}/>)}
                     <TouchableOpacity style={styles.button} onPress={()=>PutKey()} >
                         <Text style={globalStyles.text}>Valider</Text>
                     </TouchableOpacity>
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
         marginTop:'10%',
     },
     textInput:{
-        fontSize:'20',
+        fontSize:20,
         width:'80%',
         height:'5%',
         backgroundColor:'#EEF6D6',

@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         marginTop:'10%',
     },
     textInput:{
-        fontSize:'20',
+        fontSize:20,
         width:'80%',
         height:'5%',
         backgroundColor:'#EEF6D6',

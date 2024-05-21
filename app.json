@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "trackeymobile",
-    "slug": "trackeymobile",
+    "name": "Trackey",
+    "slug": "trackey",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FCFDFA"
     },
     "plugins": [
       [
@@ -26,15 +26,24 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.trackey.trackey",
       "infoPlist": {
-        "NSCameraUsageDescription": "Souhaitez-vous autoriser Trackey à utiliser votre camera ?"}
-  },
+        "NSCameraUsageDescription": "Souhaitez-vous autoriser Trackey à utiliser votre camera ?"
+      },
+      "splash": {
+        "image": "./assets/splash-ios.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#FCFDFA"
+      }
+    },
     "android": {
       "package": "com.trackey.trackey",
       "versionCode": 1,
-      "permissions": ["CAMERA"],
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FCFDFA"
       }
     },
     "web": {
@@ -42,9 +51,28 @@
     },
     "extra": {
       "eas": {
-        "projectId": "7d565900-1824-4228-8d17-52c5c648f8aa"
+        "projectId": "ed818dd9-f990-4ac0-b09e-723776352885"
       }
     },
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "owner": "nick3.0"
+  },
+  "configVersion": 0,
+  "apple": {
+    "info": {
+      "en-US": {
+        "title": "Trackey",
+        "subtitle": "Gestion des clés pour syndic",
+        "description": "Logiciel de gestion des clés pour les syndics de copropriétés",
+        "keywords": [
+          "Trackey",
+          "app"
+        ],
+        "supportUrl": "https://trackey.fr/contact"
+      }
+    }
   }
 }
