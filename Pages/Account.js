@@ -19,8 +19,14 @@ const Account = () => {
 
     return (<SafeAreaProvider>{user ? (
         <View style={globalStyles.deconnectPage}>
-            <TouchableOpacity style={globalStyles.button} onPress={() => logoutUser()}>
+            <TouchableOpacity style={styles.button} onPress={() => logoutUser()}>
                 <Text style={globalStyles.textForm}>Déconnexion</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.smallButton} onPress={() => Linking.openURL('https://trackey.fr/contact')}>
+                <Text style={globalStyles.textForm}>Contact</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.smallButton} onPress={() => Linking.openURL('https://trackey.fr/Donnees')}>
+                <Text style={globalStyles.textForm}>Politique de Confidentialité</Text>
             </TouchableOpacity>
         </View>):(
         <View style={globalStyles.page}>
@@ -45,7 +51,7 @@ const Account = () => {
                 <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate('Mot de passe oublié')}>
                     <Text style={globalStyles.text}>Mot de passe oublié</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={globalStyles.smallButton} onPress={() => Linking.openURL('https://trackey.fr/signIn')}>
+                <TouchableOpacity style={globalStyles.smallButton} onPress={() => navigation.navigate("CreateAccount")}>
                     <Text style={globalStyles.text}>Créer un compte</Text>
                 </TouchableOpacity>
                 </View>
@@ -58,4 +64,29 @@ const Account = () => {
     );
 };
 
+const styles = StyleSheet.create({
+    smallButton:{
+        width: '70%',
+        height: 30,
+        backgroundColor: '#D3E7A6',
+        borderRadius: 20,
+        borderWidth: 3,
+        borderColor: '#8DB654',
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin:10
+    },
+    button:{
+        width: '70%',
+        height: 50,
+        backgroundColor: '#D3E7A6',
+        borderRadius: 20,
+        borderWidth: 3,
+        borderColor: '#8DB654',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color:'#37401C',
+        margin:20,
+    }
+  });
   export default Account;

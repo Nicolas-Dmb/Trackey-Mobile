@@ -71,8 +71,17 @@
           "Trackey",
           "app"
         ],
+        "privacyPolicyUrl": "https://trackey.fr/Donnees",
         "supportUrl": "https://trackey.fr/contact"
+      }
+    }
+  },
+  "build": {
+    "production": {
+      "android": {
+        "workflow": "managed"
       }
     }
   }
 }
+  

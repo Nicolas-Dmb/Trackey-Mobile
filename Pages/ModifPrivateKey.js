@@ -36,38 +36,40 @@ function ModifPrivateKey(){
         ]);
     
     const pickImage = async () => {
-        // Laisser l'utilisateur choisir une image depuis la galerie
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-        if (pickerResult.granted === false) {
-            alert("Veuillez autoriser l'accès à vos photos!");
-            return;
-        }
-        if (!pickerResult.canceled) {
-            setImage(pickerResult.assets[0].uri);
+        const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            navigation.navigate("PickPhoto");
+        }else {
+            let pickerResult = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+
+            if (!pickerResult.canceled) {
+                setImage(pickerResult.assets[0].uri);
+            }
         }
     };
 
     const takePhoto = async () => {
-        // Laisser l'utilisateur prendre une photo
-        const cameraResult = await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-        if (cameraResult.granted === false) {
-            alert('Permission to use camera is required!');
-            return;
-        }
-        if (!cameraResult.canceled) {
-            setImage(cameraResult.assets[0].uri);
+        const { status } = await ImagePicker.getCameraPermissionsAsync();
+        if (status !== 'granted') {
+            navigation.navigate("TakePhoto");
+        }else {
+            const cameraResult = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            if (!cameraResult.canceled) {
+                setImage(cameraResult.assets[0].uri);
+            }
         }
     };
+    
 
     let PutKey = async() =>{
         let formData = new FormData();

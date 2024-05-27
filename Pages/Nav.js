@@ -18,6 +18,9 @@ import ModifPrivateKey from './ModifPrivateKey.js';
 import Error_Key from './Error_key.js';
 import CreateTrack from './NewTrackKey.js';
 import ResultTrack from './ResultNewTrack.js';
+import CreateAccount from './CreateAccount.js';
+import TakePhoto from './TakePhoto.js';
+import PickPhoto from './PickPhoto.js';
 
 
 const Tab = createBottomTabNavigator();
@@ -49,6 +52,8 @@ function DataStackNavigator(){
       <DataStack.Screen name="CreatePrivateKey" component={CreatePrivateKey}/>
       <DataStack.Screen name="ModifCommonKey" component={ModifCommonKey}/>
       <DataStack.Screen name="ModifPrivateKey" component={ModifPrivateKey}/>
+      <DataStack.Screen name="TakePhoto" component={TakePhoto}/>
+      <DataStack.Screen name="PickPhoto" component={PickPhoto}/>
     </DataStack.Navigator>
   )
 }
@@ -112,6 +117,7 @@ const Nav=()=>{
               <AccountStack.Navigator screenOptions={{ headerShown: false}}>
               <AccountStack.Screen name="Connexion" component={Account}/>
               <AccountStack.Screen name="Mot de passe oublié" component={MPoublie}/>
+              <AccountStack.Screen name="CreateAccount" component={CreateAccount}/>
               </AccountStack.Navigator>
           </NavigationContainer>)
   );

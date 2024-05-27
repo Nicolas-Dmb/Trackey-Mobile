@@ -7,6 +7,7 @@ import AuthContext from '../context/AuthContext';
 import Header from '../Components/Header.js'
 import { globalStyles } from '../styles/GlobalStyles';
 
+
 const screenHeight = Dimensions.get('window').height;
 const tabBarHeight = screenHeight;
 
@@ -131,9 +132,28 @@ export default function App() {
   }
   if (!Permission.granted) {
     return (
-      <View>
-        <Text style={{ textAlign: 'center' }}>Nous avons besoin de votre permission pour accéder à la camera</Text>
-        <Button onPress={setPermission} title="Donner la permission" />
+      <View style={globalStyles.page}>
+        <View style={globalStyles.header}>
+          <SafeAreaView style={globalStyles.SearchBar}>
+            <Text style={globalStyles.title}>Scan</Text>
+          </SafeAreaView>
+        </View>
+        <Text style={{marginTop:'15%', textAlign: 'center'}}>Nous avons besoin de votre permission pour accéder à la camera</Text>
+        <Text  style={{ textAlign: 'center', marginBottom:20}}>L'accès à la caméra permet de scanner les Qrcodes des clés et vous permettre de créer des départs et retours de clés.</Text>
+        <TouchableOpacity style={globalStyles.smallButton} onPress={setPermission}>
+              <Text>Donner la permission</Text>
+        </TouchableOpacity>
+        <Text style={{marginTop: 20, textAlign: 'center' }}>Si le bouton n'a aucun effet c'est peut-être que vous avez désactivé manuellement l'accès à la caméra.</Text>
+        <Text style={{marginBottom: 20, textAlign: 'center' }}>
+            Veuillez modifier manuellement l'autorisation via : 
+        </Text>
+        <Text style={{marginBottom: 20, textAlign: 'center' }}>
+            IOS = Réglages &gt;  Trackey &gt; App. photo : on
+        </Text>
+        <Text style={{marginBottom: 20, textAlign: 'center' }}>
+            Android = Paramètres &gt; Applications &gt; Trackey &gt; Autorisations &gt; Caméra : Activer
+        </Text>
+
       </View>);
   }
 

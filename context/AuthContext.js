@@ -11,7 +11,6 @@ const AuthContext = createContext(null)
 export default AuthContext; 
 
 export const AuthProvider = ({children}) => {
-
     //Pour conserver les jetons et l'id user : 
     const [authTokens, setAuthTokens] = useState(null);
     const [user, setUser] = useState(null);
@@ -51,6 +50,24 @@ export const AuthProvider = ({children}) => {
             await AsyncStorage.setItem('authTokens', JSON.stringify(data))
         }else{
             alert('Identifiant ou Mot de passe incorrect')
+        }
+    }
+    //Create Account
+    let newAccount= async(name, email, adresse, Mp, confirmMp, setSuccessNewAccount) => {
+        let response = await fetch('https://www.apitrackey.fr/api/user/create',{
+        method:'POST', 
+        headers:{
+            'Content-Type':'application/json'},
+             body:JSON.stringify({'Name':name,'email':email,"Adresse":adresse,'password':Mp, "confirm_password":confirmMp})
+        });
+        if (response.status === 201){
+            alert('Votre compte agence a bien été crée !')
+            setSuccessNewAccount(true)
+        }else{
+            let data = await response.json()
+            if (data && data.email && data.email.length > 0) {
+                const errorMessage = data.email.join('\n');
+                alert(errorMessage);}
         }
     }
 
@@ -110,6 +127,7 @@ export const AuthProvider = ({children}) => {
         loginUser:loginUser,
         logoutUser:logoutUser,
         sendOTP : sendOTP,
+        newAccount:newAccount,
     }
 
     useEffect(()=> {
