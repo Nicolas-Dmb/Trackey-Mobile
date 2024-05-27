@@ -51,7 +51,7 @@ function CreateAccount(){
                     placeholder='trackey@gmail.com'
                     autoCapitalize="none"
                     value = {email}
-                    maxLength="100"
+                    maxLength={100}
                     onChangeText = {setEmail}
                     keyboardType="email-address"/>
                 <ValidEmail setValidEmail={setValidEmail} valeur={email}/>
@@ -60,13 +60,13 @@ function CreateAccount(){
                     style={globalStyles.textInput}
                     placeholder="Nom de l'entreprise"
                     value = {name}
-                    maxLength="100"
+                    maxLength={100}
                     onChangeText = {setName}/>
                 <Text style={globalStyles.textForm}>Adresse de l'agence:</Text>
                 <TextInput
                     style={globalStyles.textInput}
                     placeholder='1 Rue Trackey, 75001 Paris'
-                    maxLength="100"
+                    maxLength={100}
                     value = {adresse}
                     onChangeText = {setAdresse}/>
                 <Text style={globalStyles.textForm}>Mot de Passe:</Text>
