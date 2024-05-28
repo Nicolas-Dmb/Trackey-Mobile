@@ -10,9 +10,9 @@ D'autres fonctionnalités déjà disponible sur le site web sont présentes :
   - Détail des clés. 
 
 # Accéder à l'application mobile : 
-###IOS : 
+### IOS : 
   - Application disponible via l'app store : Trackey
-###Android : 
+### Android : 
 Disponible en version beta : 
    - Veuillez m'envoyer un mail à contact@trackey.fr,
    - Avec l'adresse mail liée à votre compte android.
