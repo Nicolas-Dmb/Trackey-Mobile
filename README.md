@@ -26,3 +26,4 @@ Afin de valider l'accès de votre compte à l'application et de vous retourner u
 - Face ID,
 - Gestion de la création de compte avec lien facile vers les gestionnaires de mot de passe pour suggestion de mot de passe,
 - Design de l'app,
+- Faciliter l'accès à la création de copropriété. 
