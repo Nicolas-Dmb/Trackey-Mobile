@@ -28,6 +28,9 @@ const Account = () => {
             <TouchableOpacity style={styles.smallButton} onPress={() => Linking.openURL('https://trackey.fr/Donnees')}>
                 <Text style={globalStyles.textForm}>Politique de Confidentialité</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate("Delete_Account")}>
+                <Text style={globalStyles.textForm}>Supprimer le compte</Text>
+            </TouchableOpacity>
         </View>):(
         <View style={globalStyles.page}>
             <View style={globalStyles.component}>

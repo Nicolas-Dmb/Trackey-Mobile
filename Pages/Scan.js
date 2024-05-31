@@ -131,7 +131,8 @@ export default function App() {
     return <View/>;
   }
   if (!Permission.granted) {
-    return (
+    navigation.navigate("TakePhoto")
+    /*return (
       <View style={globalStyles.page}>
         <View style={globalStyles.header}>
           <SafeAreaView style={globalStyles.SearchBar}>
@@ -154,7 +155,7 @@ export default function App() {
             Android = Paramètres &gt; Applications &gt; Trackey &gt; Autorisations &gt; Caméra : Activer
         </Text>
 
-      </View>);
+      </View>);*/
   }
 
 

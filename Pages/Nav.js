@@ -21,6 +21,7 @@ import ResultTrack from './ResultNewTrack.js';
 import CreateAccount from './CreateAccount.js';
 import TakePhoto from './TakePhoto.js';
 import PickPhoto from './PickPhoto.js';
+import DeleteAccount from './DeleteAccount.js';
 
 
 const Tab = createBottomTabNavigator();
@@ -37,6 +38,7 @@ function AccountStackNavigator(){
     <AccountStack.Navigator screenOptions={{ headerShown: false}}>
       <AccountStack.Screen name="Connexion" component={Account}/>
       <AccountStack.Screen name="Mot de passe oublié" component={MPoublie}/>
+      <AccountStack.Screen name="Delete_Account" component={DeleteAccount}/>
     </AccountStack.Navigator>
   )
 }

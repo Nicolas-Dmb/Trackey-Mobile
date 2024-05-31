@@ -2,7 +2,7 @@
   "expo": {
     "name": "Trackey",
     "slug": "trackey",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,10 +24,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "3",
+      "buildNumber": "5",
       "bundleIdentifier": "com.trackey.trackey",
       "infoPlist": {
-        "NSCameraUsageDescription": "Souhaitez-vous autoriser Trackey à utiliser votre camera ?"
+        "NSCameraUsageDescription": "l'accès à la camera permettra à l'application de scanner les qrcodes et de prendre les photos de vos clés.",
+        "NSPhotoLibraryUsageDescription":"l'accès à vos photos permettra de séléctionner les photos de vos clés."
       },
       "splash": {
         "image": "./assets/splash-ios.png",
@@ -37,7 +38,7 @@
     },
     "android": {
       "package": "com.trackey.trackey",
-      "versionCode": 3,
+      "versionCode": 4,
       "permissions": [
         "CAMERA",
         "android.permission.CAMERA"

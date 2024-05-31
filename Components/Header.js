@@ -20,4 +20,9 @@ const Header = ({title}) => {
     )
 };
 
+const styles = StyleSheet.create({
+    title: {
+
+    },
+})
   export default Header;

@@ -110,7 +110,7 @@ function Copropriete() {
         </View>
         <SafeAreaView>
           <View style={styles.page}>
-              <TouchableOpacity style={[globalStyles.smallButton, styles.marge]} onPress={() => alert('Pour ajouter des copropriétés veuillez vous connecter au site web')}>
+              <TouchableOpacity style={[globalStyles.smallButton, styles.marge]} onPress={() => alert(`Pour ajouter des copropriétés veuillez vous connecter au site web trackey.fr`)}>
                   <Text>Nouvelle Copropriété</Text>
               </TouchableOpacity>
               <FlatList

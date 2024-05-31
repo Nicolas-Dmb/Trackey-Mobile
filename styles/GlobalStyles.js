@@ -166,6 +166,7 @@ export const globalStyles = StyleSheet.create({
         flexDirection: 'column',
         padding: 10,
         position: 'relative',  // 'sticky' n'est pas directement supporté par React Native
+        paddingTop:'10%',
     
         // Styles spécifiques à React Native pour ajouter une ombre
         shadowColor: "#000",
