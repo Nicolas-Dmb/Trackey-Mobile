@@ -2,7 +2,7 @@
   "expo": {
     "name": "Trackey",
     "slug": "trackey",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,7 @@
       [
         "expo-barcode-scanner",
         {
-          "cameraPermission": "Autoriser Trackey d'acceder à la Camera"
+          "cameraPermission": "l'accès à la camera permettra à l'application de scanner les qrcodes et de prendre les photos de vos clés."
         }
       ]
     ],
@@ -24,7 +24,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "5",
+      "buildNumber": "6",
       "bundleIdentifier": "com.trackey.trackey",
       "infoPlist": {
         "NSCameraUsageDescription": "l'accès à la camera permettra à l'application de scanner les qrcodes et de prendre les photos de vos clés.",
