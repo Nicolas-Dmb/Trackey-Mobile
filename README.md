@@ -11,8 +11,7 @@ D'autres fonctionnalités déjà disponible sur le site web sont présentes :
 
 # Accéder à l'application mobile : 
 ### IOS : 
-  - Application disponible via l'app store : Trackey. 
-Pour la trouver plus facilement recherchez "Trackey syndic"
+  - Application disponible via l'app store : [Trackey](https://apps.apple.com/fr/app/trackey/id6503019560)
 ### Android : 
 Disponible en version beta : 
    - Veuillez m'envoyer un mail à contact@trackey.fr,
