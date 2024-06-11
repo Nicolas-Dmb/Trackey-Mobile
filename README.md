@@ -20,7 +20,7 @@ Afin de valider l'accès de votre compte à l'application et de vous retourner u
 
 
 
-[![Vidéo de présentation](https://github.com/Nicolas-Dmb/Trackey/blob/main/public/video.png)](https://www.youtube.com/watch?v=wtl7L5LCQL8) 
+[![Vidéo de présentation](https://youtube.com/shorts/2JRQTjdrogw) 
 
 # Points à amélliorer : 
 - Face ID,
